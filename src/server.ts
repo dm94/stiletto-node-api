@@ -1,10 +1,12 @@
 import fastify from 'fastify';
-import config from './plugins/config.js';
-import routes from './routes/index.js';
+import config, { NodeEnv } from './plugins/config.js';
 import cors from '@fastify/cors';
 import rateLimit from '@fastify/rate-limit';
 import jwt from '@fastify/jwt';
 import autoLoad from '@fastify/autoload';
+import swagger from '@fastify/swagger';
+import swaggerUi from '@fastify/swagger-ui';
+import { schema } from './utils/swagger';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 
@@ -72,9 +74,19 @@ server.setNotFoundHandler(
 
 await server.register(config);
 
+if (process.env.NODE_ENV === NodeEnv.development) {
+  await server.register(swagger, schema);
+  await server.register(swaggerUi, { routePrefix: '/doc' });
+}
+
 await server.register(autoLoad, {
   dir: join(__dirname, 'routes'),
 });
+
 await server.ready();
+
+if (process.env.NODE_ENV === NodeEnv.development) {
+  server.swagger();
+}
 
 export default server;

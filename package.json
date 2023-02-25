@@ -36,6 +36,8 @@
     "@fastify/mongodb": "^6.2.0",
     "@fastify/mysql": "^4.1.0",
     "@fastify/rate-limit": "^7.6.0",
+    "@fastify/swagger": "^8.3.1",
+    "@fastify/swagger-ui": "^1.4.0",
     "@sinclair/typebox": "^0.23.5",
     "ajv": "^8.11.2",
     "dotenv": "^16.0.3",
