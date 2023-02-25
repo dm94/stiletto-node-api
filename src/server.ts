@@ -2,6 +2,7 @@ import fastify from 'fastify';
 import config from './plugins/config.js';
 import routes from './routes/index.js';
 import cors from '@fastify/cors';
+import rateLimit from '@fastify/rate-limit';
 
 const server = fastify({
   ajv: {
@@ -18,6 +19,26 @@ const server = fastify({
 await server.register(cors, {
   // put your options here
 });
+await server.register(rateLimit, {
+  global: true,
+  max: 100,
+  timeWindow: '1 minute',
+  allowList: ['127.0.0.1'],
+});
+
+/* 404 error handling */
+server.setNotFoundHandler(
+  {
+    preHandler: server.rateLimit({
+      max: 4,
+      timeWindow: 500,
+    }),
+  },
+  function (request, reply) {
+    reply.code(404).send({ error: '404' });
+  },
+);
+
 await server.register(config);
 await server.register(routes);
 await server.ready();
