@@ -3,6 +3,7 @@ import config from './plugins/config.js';
 import routes from './routes/index.js';
 import cors from '@fastify/cors';
 import rateLimit from '@fastify/rate-limit';
+import jwt from '@fastify/jwt';
 
 const server = fastify({
   ajv: {
@@ -19,12 +20,6 @@ const server = fastify({
 await server.register(cors, {
   // put your options here
 });
-await server.register(rateLimit, {
-  global: true,
-  max: 100,
-  timeWindow: '1 minute',
-  allowList: ['127.0.0.1'],
-});
 
 /*await server.register(require('@fastify/mysql'), {
   connectionString: 'mysql://root@localhost/mysql',
@@ -36,6 +31,25 @@ server.register(require('@fastify/mongodb'), {
   url: 'mongodb://mongo/mydb'
 })
 */
+
+server.register(jwt, {
+  secret: 'supersecret',
+});
+
+server.decorate('authenticate', async function (request, reply) {
+  try {
+    await request.jwtVerify();
+  } catch (err) {
+    reply.send(err);
+  }
+});
+
+await server.register(rateLimit, {
+  global: true,
+  max: 100,
+  timeWindow: '1 minute',
+  allowList: ['127.0.0.1'],
+});
 
 /* 404 error handling */
 server.setNotFoundHandler(
