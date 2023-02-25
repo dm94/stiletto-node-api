@@ -1,7 +1,7 @@
 {
   "name": "stiletto-node-api",
-  "version": "1.0.0",
-  "description": "",
+  "version": "3.0.0",
+  "description": "API for [Stiletto Web](https://github.com/dm94/stiletto-web)",
   "type": "module",
   "scripts": {
     "lint": "eslint .",
@@ -24,7 +24,6 @@
     "typescript"
   ],
   "author": "Daniel Martín",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/dm94/stiletto-node-api/issues"
   },
