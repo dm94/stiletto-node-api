@@ -5,6 +5,7 @@ const routes: FastifyPluginAsync = async (server) => {
   server.get(
     '/',
     {
+      onRequest: [server.authenticate],
       schema: {
         response: {
           200: Type.Object({

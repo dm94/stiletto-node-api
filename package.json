@@ -30,6 +30,7 @@
   },
   "homepage": "https://github.com/dm94/stiletto-node-api",
   "dependencies": {
+    "@fastify/autoload": "^5.7.1",
     "@fastify/cors": "^8.2.0",
     "@fastify/jwt": "^6.6.0",
     "@fastify/mongodb": "^6.2.0",

@@ -4,6 +4,12 @@ import routes from './routes/index.js';
 import cors from '@fastify/cors';
 import rateLimit from '@fastify/rate-limit';
 import jwt from '@fastify/jwt';
+import autoLoad from '@fastify/autoload';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const server = fastify({
   ajv: {
@@ -65,7 +71,10 @@ server.setNotFoundHandler(
 );
 
 await server.register(config);
-await server.register(routes);
+
+await server.register(autoLoad, {
+  dir: join(__dirname, 'routes'),
+});
 await server.ready();
 
 export default server;
