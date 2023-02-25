@@ -1,6 +1,6 @@
 import { Static, Type } from '@sinclair/typebox';
 
-export const ClanInfo = Type.Object({
+export const ClanInfoSchema = Type.Object({
   clanid: Type.String(),
   name: Type.String(),
   discordid: Type.Optional(Type.String()),
@@ -13,4 +13,4 @@ export const ClanInfo = Type.Object({
   discordTag: Type.String(),
 });
 
-export type ClanInfoType = Static<typeof ClanInfo>;
+export type ClanInfo = Static<typeof ClanInfoSchema>;

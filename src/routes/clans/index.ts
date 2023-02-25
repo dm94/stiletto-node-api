@@ -1,14 +1,40 @@
 import { Type } from '@sinclair/typebox';
 import { FastifyPluginAsync } from 'fastify';
-import { ClanInfo, ClanInfoType } from '../../types/clans';
+import { ClanInfo, ClanInfoSchema } from '../../types/clans';
 
 const routes: FastifyPluginAsync = async (server) => {
-  server.get<{ Reply: ClanInfoType[] }>(
+  server.get<{ Reply: ClanInfo[] }>(
     '/',
     {
       schema: {
+        description: 'Return the list of clans',
+        summary: 'getClans',
+        operationId: 'getClans',
+        tags: ['clans'],
+        querystring: {
+          type: 'object',
+          required: [],
+          properties: {
+            pageSize: {
+              type: 'integer',
+              default: 10,
+            },
+            page: {
+              type: 'integer',
+              default: 1,
+            },
+            name: {
+              type: 'string',
+              description: 'Filter by Clan name',
+            },
+            region: {
+              type: 'string',
+              description: 'Filter by region',
+            },
+          },
+        },
         response: {
-          200: Type.Array(ClanInfo),
+          200: Type.Array(ClanInfoSchema),
         },
       },
     },
