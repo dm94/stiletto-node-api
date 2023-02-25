@@ -1,12 +1,18 @@
+import { version, description, author, homepage, bugs } from '../../package.json';
+
 export const schema = {
   openapi: {
     info: {
       title: 'Stiletto API',
-      description: 'API for [Stiletto Web](https://github.com/dm94/stiletto-web)',
-      version: '3.0.0',
+      description: description,
+      version: version,
+      contact: {
+        name: author,
+        url: bugs.url,
+      },
     },
     externalDocs: {
-      url: 'https://bump.sh/doc/stiletto-api',
+      url: homepage,
     },
     consumes: ['application/json'],
     produces: ['application/json'],
