@@ -3,7 +3,6 @@ import config from './plugins/config.js';
 import routes from './routes/index.js';
 import cors from '@fastify/cors';
 import rateLimit from '@fastify/rate-limit';
-import mysql from '@fastify/mysql';
 
 const server = fastify({
   ajv: {
@@ -27,9 +26,16 @@ await server.register(rateLimit, {
   allowList: ['127.0.0.1'],
 });
 
-/*await server.register(mysql, {
+/*await server.register(require('@fastify/mysql'), {
   connectionString: 'mysql://root@localhost/mysql',
 });*/
+
+/*
+server.register(require('@fastify/mongodb'), {
+  forceClose: true,
+  url: 'mongodb://mongo/mydb'
+})
+*/
 
 /* 404 error handling */
 server.setNotFoundHandler(
