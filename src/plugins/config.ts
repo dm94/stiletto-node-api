@@ -10,12 +10,24 @@ export enum NodeEnv {
   production = "production",
 }
 
+export enum LogLevel {
+  trace = "trace",
+  debug = "debug",
+  info = "info",
+  warn = "warn",
+  error = "error",
+  fatal = "fatal",
+}
+
 const ConfigSchema = Type.Strict(
   Type.Object({
     NODE_ENV: Type.Enum(NodeEnv),
-    LOG_LEVEL: Type.String(),
+    LOG_LEVEL: Type.Enum(LogLevel),
     API_HOST: Type.String(),
     API_PORT: Type.String(),
+    JWT_SECRET: Type.String(),
+    MYSQL_CONNECTION: Type.Optional(Type.String()),
+    MONGODB_CONNECTION: Type.Optional(Type.String()),
   })
 );
 
