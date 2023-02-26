@@ -6,6 +6,8 @@ import jwt from '@fastify/jwt';
 import autoLoad from '@fastify/autoload';
 import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
+import mysql from '@fastify/mysql';
+import mongodb from '@fastify/mongodb';
 import { schema } from './utils/swagger';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
@@ -25,23 +27,26 @@ const server = fastify({
     level: process.env.LOG_LEVEL,
   },
 });
+
 await server.register(cors, {
   // put your options here
 });
 
-/*await server.register(require('@fastify/mysql'), {
-  connectionString: 'mysql://root@localhost/mysql',
-});*/
+if (process.env.MYSQL_CONNECTION) {
+  await server.register(mysql, {
+    connectionString: process.env.MYSQL_CONNECTION,
+  });
+}
 
-/*
-server.register(require('@fastify/mongodb'), {
-  forceClose: true,
-  url: 'mongodb://mongo/mydb'
-})
-*/
+if (process.env.MONGODB_CONNECTION) {
+  await server.register(mongodb, {
+    forceClose: true,
+    url: process.env.MONGODB_CONNECTION
+  })
+}
 
-server.register(jwt, {
-  secret: 'supersecret',
+await server.register(jwt, {
+  secret: process.env.JWT_SECRET ?? 'supersecret',
 });
 
 server.decorate('authenticate', async function (request, reply) {

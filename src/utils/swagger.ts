@@ -1,9 +1,9 @@
-import { version, description, author, homepage, bugs } from '../../package.json';
+import { version, description, author, homepage, bugs, name } from '../../package.json';
 
 export const schema = {
   openapi: {
     info: {
-      title: 'Stiletto API',
+      title: name,
       description: description,
       version: version,
       contact: {
@@ -39,4 +39,5 @@ export const schema = {
       },
     },
   },
+  hideUntagged: true,
 };
