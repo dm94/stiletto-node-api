@@ -16,14 +16,25 @@ const routes: FastifyPluginAsync = async (server) => {
         },
       },
     },
-    async function () {
-      return {
-          nickname: 'string',
-          discordtag: 'string',
-          clanid: 0,
-          clanname: 'string',
-          leaderid: 'string',
-        };
+    function (request, reply) {
+      server.mysql.getConnection(onConnect);
+
+      function onConnect (err, client) {
+        if (err) return reply.send(err);
+    
+        client.query(
+          'select users.nickname, users.discordtag, users.discordID discordid, users.clanid, clans.name clanname, clans.leaderid, clans.discordid serverdiscord from users left join clans on users.clanid=clans.clanid where users.token=?', 'clnD8NhVbKaAwrzF',
+          function onResult (err, result) {
+            client.release();
+            if (result && result[0]) {
+              return reply.send(result[0]);
+            }
+            
+            reply.code(401);
+            return new Error('Invalid token JWT');
+          }
+        );
+      }
     },
   );
 };

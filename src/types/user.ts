@@ -6,6 +6,7 @@ export const UserSchema = Type.Object({
   clanid: Type.Optional(Type.Integer()),
   clanname: Type.Optional(Type.String()),
   leaderid: Type.Optional(Type.String()),
+  serverdiscord: Type.Optional(Type.String()),
 });
 
 export type UserInfo = Static<typeof UserSchema>;
