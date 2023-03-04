@@ -8,6 +8,7 @@ import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
 import mysql from '@fastify/mysql';
 import mongodb from '@fastify/mongodb';
+import oauth2 from '@fastify/oauth2';
 import { schema } from './utils/swagger';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
@@ -78,6 +79,20 @@ server.setNotFoundHandler(
 );
 
 await server.register(config);
+
+await server.register(oauth2, {
+  name: 'discordOAuth2',
+  credentials: {
+    client: {
+      id: server.config.DISCORD_CLIENT_ID,
+      secret: server.config.DISCORD_CLIENT_SECRET
+    },
+    auth: oauth2.DISCORD_CONFIGURATION
+  },
+  scope: ['identify'],
+  startRedirectPath: '/discord',
+  callbackUri: server.config.DISCORD_REDIRECT_URL
+})
 
 if (process.env.NODE_ENV === NodeEnv.development) {
   await server.register(swagger, schema);
