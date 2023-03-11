@@ -23,7 +23,6 @@ export const getLoginInfo = async (server, request, reply) => {
         );
 
         if (token) {
-          console.log('Con token', token);
           try {
             await server.jwt.verify(token, (err) => {
               if (err) {
@@ -41,7 +40,6 @@ export const getLoginInfo = async (server, request, reply) => {
         }
         token = await server.jwt.sign({ discordid: discordId }, { expiresIn: '30d' });
 
-        console.log('Sin token', token);
         const date = new Date().toISOString().split('T')[0];
 
         server.mysql.getConnection((err, client) => {
