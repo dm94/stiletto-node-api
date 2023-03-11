@@ -20,14 +20,20 @@ const routes: FastifyPluginAsync = async (server) => {
     (request, reply) => {
       let bearer = request.headers.authorization;
       bearer = bearer?.replace('Bearer', '').trim();
-      console.log('bearer', bearer);
 
       server.mysql.query(
         'select users.nickname, users.discordtag, users.discordID discordid, users.clanid, clans.name clanname, clans.leaderid, clans.discordid serverdiscord from users left join clans on users.clanid=clans.clanid where users.token=?',
         bearer,
         (err, result) => {
           if (result && result[0]) {
-            return reply.code(200).send(result[0]);
+            return reply.code(200).send({
+              nickname: result[0].nickname ?? undefined,
+              discordtag: result[0].discordtag,
+              clanid: result[0].clanid ?? undefined,
+              clanname: result[0].clanname ?? undefined,
+              leaderid: result[0].leaderid ?? undefined,
+              serverdiscord: result[0].serverdiscord ?? undefined,
+            });
           }
           if (err) {
             reply.code(401);
