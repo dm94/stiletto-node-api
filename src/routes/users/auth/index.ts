@@ -3,7 +3,7 @@ import { LoginInfo, LoginSchema } from '@customtypes/user';
 import { getLoginInfo } from '@services/auth';
 
 const routes: FastifyPluginAsync = async (server) => {
-  server.get<{ Reply: LoginInfo }>(
+  server.post<{ Reply: LoginInfo }>(
     '/',
     {
       schema: {

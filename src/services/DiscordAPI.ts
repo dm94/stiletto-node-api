@@ -1,43 +1,27 @@
-import axios from 'axios';
-
-const baseUrl = "https://discord.com/api/";
-const scopes = ['identify','guilds'];
+import DiscordOauth2 from 'discord-oauth2';
 
 export const getAccessToken = async (code: string) => {
-  const options = {
-    method: "post",
-    url: `${baseUrl}oauth2/token`,
-    params: {
-      grant_type: "authorization_code",
-      client_id: process.env.DISCORD_CLIENT_ID,
-      client_secret: process.env.DISCORD_CLIENT_SECRET,
-      redirect_uri: process.env.DISCORD_REDIRECT_URL,
-      code: code,
-    },
-  };
+  const oauth = new DiscordOauth2();
 
-  return await axios.request(options)
-    .then((response) => { 
-      return response.data;
-    }).catch((error) => { 
-      console.log(error);
-      return null;
+  try {
+    return await oauth.tokenRequest({
+      clientId: process.env.DISCORD_CLIENT_ID,
+      clientSecret: process.env.DISCORD_CLIENT_SECRET,
+      code: code,
+      scope: 'identify guilds',
+      grantType: 'authorization_code',
+      redirectUri: process.env.DISCORD_REDIRECT_URL,
     });
+  } catch (e) {
+    return null;
+  }
 };
 export const getUser = async (accessToken: string) => {
-  const options = {
-    method: "get",
-    url: `${baseUrl}users/@me`,
-    headers: {
-      "Authorization": `Bearer ${accessToken}`,
-    }
-  };
-    
-  return await axios.request(options)
-    .then((response) => { 
-      return response.data;
-    }).catch((error) => { 
-      console.log(error);
-      return null;
-    });
+  const oauth = new DiscordOauth2();
+
+  try {
+    return await oauth.getUser(accessToken);
+  } catch (e) {
+    return null;
+  }
 };
