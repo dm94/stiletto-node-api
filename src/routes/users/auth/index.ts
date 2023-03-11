@@ -27,7 +27,11 @@ const routes: FastifyPluginAsync = async (server) => {
       },
     },
     async function (request, reply) {
-      return await getLoginInfo(server, request.query.code, reply);
+      try {
+        return await getLoginInfo(server, request, reply);
+      } catch (e) {
+        reply.code(500);
+      }
     },
   );
 };
