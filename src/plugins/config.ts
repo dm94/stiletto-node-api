@@ -28,6 +28,9 @@ const ConfigSchema = Type.Strict(
     JWT_SECRET: Type.String(),
     MYSQL_CONNECTION: Type.Optional(Type.String()),
     MONGODB_CONNECTION: Type.Optional(Type.String()),
+    DISCORD_CLIENT_ID: Type.String(),
+    DISCORD_CLIENT_SECRET: Type.String(),
+    DISCORD_REDIRECT_URL: Type.String()
   })
 );
 

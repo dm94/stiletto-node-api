@@ -27,15 +27,17 @@ export const schema = {
       { name: 'users' },
       { name: 'walkers' },
     ],
-    securityDefinitions: {
-      apiKey: {
-        type: 'apiKey',
-        name: 'apiKey',
-        in: 'header',
-      },
-      token: {
-        type: 'http',
-        scheme: 'bearer',
+    components: {
+      securitySchemes: {
+        apiKey: {
+          type: 'apiKey',
+          name: 'apiKey',
+          in: 'header',
+        },
+        token: {
+          type: 'http',
+          scheme: 'bearer',
+        },
       },
     },
   },
