@@ -16,7 +16,7 @@ export const getLoginInfo = async (server, request, reply) => {
           'select users.nickname, users.discordtag, users.discordID discordid, users.clanid, users.token from users where users.discordID=?',
           discordId,
           (err, result) => {
-            if (result && result[0].token) {
+            if (result && result[0]?.token) {
               token = result[0].token;
             }
           },
@@ -42,21 +42,17 @@ export const getLoginInfo = async (server, request, reply) => {
 
         const date = new Date().toISOString().split('T')[0];
 
-        server.mysql.getConnection((err, client) => {
-          if (err) return reply.send(err);
-
-          client.query(
-            'INSERT INTO users(discordID, discordTag,token,createdAt) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE token=?, lastUpdate=?',
-            [discordId, username, token, date, token, date],
-            function onResult() {
-              return reply.code(202).send({
-                discordid: discordId,
-                discordTag: username,
-                token: token,
-              });
-            },
-          );
-        });
+        server.mysql.query(
+          'INSERT INTO users(discordID, discordTag,token,createdAt) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE token=?, lastUpdate=?',
+          [discordId, username, token, date, token, date],
+          (err, result) => {
+            return reply.code(202).send({
+              discordid: discordId,
+              discordTag: username,
+              token: token,
+            });
+          },
+        );
 
         return reply.code(202).send({
           discordid: discordId,
@@ -66,7 +62,4 @@ export const getLoginInfo = async (server, request, reply) => {
       }
     }
   }
-
-  reply.code(401);
-  return new Error('Discord code not valid');
 };
