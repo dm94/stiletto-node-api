@@ -15,6 +15,11 @@ const routes: FastifyPluginAsync = async (server) => {
         response: {
           200: UserSchema,
         },
+        security: [
+          {
+            token: [],
+          },
+        ],
       },
     },
     (request, reply) => {
@@ -43,44 +48,56 @@ const routes: FastifyPluginAsync = async (server) => {
       );
     },
   );
-  server.put<{ Reply: UserInfo }>(
+  server.put<{ Reply }>(
     '/',
     {
       onRequest: [server.authenticate],
       schema: {
-        description: 'Returns a user information',
-        summary: 'getUser',
-        operationId: 'getUser',
+        description: "Update a user's game name",
+        summary: 'addNick',
+        operationId: 'addNick',
         tags: ['users'],
+        querystring: {
+          type: 'object',
+          required: ['dataupdate'],
+          properties: {
+            dataupdate: {
+              type: 'string',
+              description: 'Nick to be added',
+            },
+          },
+        },
         response: {
           202: Type.Object({
-            Success: Type.String(),
+            message: Type.String(),
           }),
         },
+        security: [
+          {
+            token: [],
+          },
+        ],
       },
     },
     (request, reply) => {
-      server.mysql.getConnection((err, client) => {
-        if (err) {
-          reply.code(500);
-          return new Error('Error with the database connection');
-        }
+      let bearer = request.headers.authorization;
+      bearer = bearer?.replace('Bearer', '').trim();
 
-        client.query(
-          'update users set nickname=? where discordID=?',
-          ['asd', 'asd'],
+      const dataupdate = request.query?.dataupdate;
+
+      if (dataupdate) {
+        server.mysql.query(
+          'update users set nickname=? where token=?',
+          [dataupdate, bearer],
           (err, result) => {
-            client.release();
-            if (err) {
-              reply.code(401);
-              return new Error('Invalid token JWT');
-            }
-            if (result && result[0]) {
-              return reply.code(200).send(result[0]);
-            }
+            return reply.code(202).send({
+              message: 'The nick to user has been added correctly',
+            });
           },
         );
-      });
+      } else {
+        return reply.code(400);
+      }
     },
   );
 };
