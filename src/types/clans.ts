@@ -1,7 +1,7 @@
 import { Static, Type } from '@sinclair/typebox';
 
 export const ClanInfoSchema = Type.Object({
-  clanid: Type.String(),
+  clanid: Type.Number(),
   name: Type.String(),
   discordid: Type.Optional(Type.String()),
   leaderid: Type.String(),
