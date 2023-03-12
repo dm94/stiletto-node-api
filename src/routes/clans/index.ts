@@ -67,7 +67,8 @@ const routes: FastifyPluginAsync = async (server) => {
 
       server.mysql.query(sql, (err, result) => {
         if (result) {
-          return reply.code(200).send(result);
+          const clanList: ClanInfo[] = result;
+          return reply.code(200).send(clanList);
         }
         if (err) {
           return reply.code(503);
