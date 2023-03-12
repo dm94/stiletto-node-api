@@ -1,3 +1,5 @@
+import { ClanInfoSchema } from '@customtypes/clans';
+import { LoginSchema, UserSchema } from '@customtypes/user';
 import { version, description, author, homepage, bugs, name } from '../../package.json';
 
 export const schema = {
@@ -39,6 +41,7 @@ export const schema = {
           scheme: 'bearer',
         },
       },
+      schemas: { UserSchema, LoginSchema, ClanInfoSchema },
     },
   },
   hideUntagged: true,

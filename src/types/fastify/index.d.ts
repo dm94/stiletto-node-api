@@ -17,3 +17,9 @@ declare module 'fastify' {
     authenticate(): void;
   }
 }
+
+declare module 'fastify' {
+  export interface FastifyRequest {
+    dbuser: UserInfo;
+  }
+}

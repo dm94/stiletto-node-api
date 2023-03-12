@@ -1,23 +1,19 @@
-import { Type } from '@sinclair/typebox';
+import { UserInfo, UserSchema } from '@customtypes/user';
 import { FastifyPluginAsync } from 'fastify';
 
 const routes: FastifyPluginAsync = async (server) => {
-  server.get(
+  server.get<{ Reply: UserInfo }>(
     '/',
     {
       onRequest: [server.authenticate],
       schema: {
         response: {
-          200: Type.Object({
-            hello: Type.String(),
-          }),
+          200: UserSchema,
         },
       },
     },
-    async (request, reply) => {
-      console.log('user', request.dbuser);
-
-      return { hello: 'world' };
+    (request) => {
+      return request.dbuser;
     },
   );
 };
