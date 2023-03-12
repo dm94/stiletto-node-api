@@ -1,6 +1,7 @@
 import { FastifyPluginAsync } from 'fastify';
 import { UserInfo, UserSchema } from '@customtypes/user';
 import { Type } from '@sinclair/typebox';
+import { sendDiscordMessage } from '@services/DiscordWebhook';
 
 const routes: FastifyPluginAsync = async (server) => {
   server.get<{ Reply: UserInfo }>(
@@ -34,6 +35,7 @@ const routes: FastifyPluginAsync = async (server) => {
             return reply.code(200).send({
               nickname: result[0].nickname ?? undefined,
               discordtag: result[0].discordtag,
+              discordid: result[0].discordid,
               clanid: result[0].clanid ?? undefined,
               clanname: result[0].clanname ?? undefined,
               leaderid: result[0].leaderid ?? undefined,
@@ -98,6 +100,56 @@ const routes: FastifyPluginAsync = async (server) => {
       } else {
         return reply.code(400);
       }
+    },
+  );
+  server.delete<{ Reply }>(
+    '/',
+    {
+      onRequest: [server.authenticate],
+      schema: {
+        description: 'Delete the user',
+        summary: 'deleteUser',
+        operationId: 'deleteUser',
+        tags: ['users'],
+        response: {
+          204: Type.Object({
+            message: Type.String(),
+          }),
+        },
+        security: [
+          {
+            token: [],
+          },
+        ],
+      },
+    },
+    (request, reply) => {
+      let bearer = request.headers.authorization;
+      bearer = bearer?.replace('Bearer', '').trim();
+
+      server.mysql.query(
+        'select users.nickname, users.discordtag, users.discordID discordid, users.clanid, clans.name clanname, clans.leaderid, clans.discordid serverdiscord from users left join clans on users.clanid=clans.clanid where users.token=?',
+        bearer,
+        (err, result) => {
+          if (result && result[0]) {
+            sendDiscordMessage(
+              JSON.stringify({
+                content: `User ${result[0].discordid} wants to delete his account`,
+                username: 'stiletto.live',
+                tts: true,
+              }),
+            );
+
+            return reply.code(204).send({
+              message: 'The admin has been notified to delete your user',
+            });
+          }
+          if (err) {
+            reply.code(401);
+            return new Error('Invalid token JWT');
+          }
+        },
+      );
     },
   );
 };

@@ -1,22 +1,22 @@
-import "dotenv/config";
-import fp from "fastify-plugin";
-import { FastifyPluginAsync } from "fastify";
-import { Static, Type } from "@sinclair/typebox";
-import Ajv from "ajv";
+import 'dotenv/config';
+import fp from 'fastify-plugin';
+import { FastifyPluginAsync } from 'fastify';
+import { Static, Type } from '@sinclair/typebox';
+import Ajv from 'ajv';
 
 export enum NodeEnv {
-  development = "development",
-  test = "test",
-  production = "production",
+  development = 'development',
+  test = 'test',
+  production = 'production',
 }
 
 export enum LogLevel {
-  trace = "trace",
-  debug = "debug",
-  info = "info",
-  warn = "warn",
-  error = "error",
-  fatal = "fatal",
+  trace = 'trace',
+  debug = 'debug',
+  info = 'info',
+  warn = 'warn',
+  error = 'error',
+  fatal = 'fatal',
 }
 
 const ConfigSchema = Type.Strict(
@@ -30,8 +30,9 @@ const ConfigSchema = Type.Strict(
     MONGODB_CONNECTION: Type.Optional(Type.String()),
     DISCORD_CLIENT_ID: Type.String(),
     DISCORD_CLIENT_SECRET: Type.String(),
-    DISCORD_REDIRECT_URL: Type.String()
-  })
+    DISCORD_REDIRECT_URL: Type.String(),
+    DISCORD_WEBHOOK: Type.String(),
+  }),
 );
 
 const ajv = new Ajv({
@@ -48,15 +49,12 @@ const configPlugin: FastifyPluginAsync = async (server) => {
   const validate = ajv.compile(ConfigSchema);
   const valid = validate(process.env);
   if (!valid) {
-    throw new Error(
-      ".env file validation failed - " +
-        JSON.stringify(validate.errors, null, 2)
-    );
+    throw new Error('.env file validation failed - ' + JSON.stringify(validate.errors, null, 2));
   }
-  server.decorate("config", process.env);
+  server.decorate('config', process.env);
 };
 
-declare module "fastify" {
+declare module 'fastify' {
   interface FastifyInstance {
     config: Config;
   }

@@ -3,6 +3,7 @@ import { Static, Type } from '@sinclair/typebox';
 export const UserSchema = Type.Object({
   nickname: Type.Optional(Type.String()) || Type.Null(),
   discordtag: Type.String(),
+  discordid: Type.String(),
   clanid: Type.Optional(Type.Integer()) || Type.Null(),
   clanname: Type.Optional(Type.String()) || Type.Null(),
   leaderid: Type.Optional(Type.String()) || Type.Null(),
