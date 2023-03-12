@@ -14,7 +14,9 @@ const routes: FastifyPluginAsync = async (server) => {
         },
       },
     },
-    async function () {
+    async (request, reply) => {
+      console.log('user', request.dbuser);
+
       return { hello: 'world' };
     },
   );

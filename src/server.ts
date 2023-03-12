@@ -57,6 +57,37 @@ server.decorate('authenticate', async function (request, reply) {
   }
 });
 
+server.addHook('onRequest', (req, reply, next) => {
+  let bearer = req.headers.authorization;
+  bearer = bearer?.replace('Bearer', '').trim();
+  if (bearer) {
+    server.mysql.query(
+      'select users.nickname, users.discordtag, users.discordID discordid, users.clanid, clans.name clanname, clans.leaderid, clans.discordid serverdiscord from users left join clans on users.clanid=clans.clanid where users.token=?',
+      bearer,
+      (err, result) => {
+        if (result && result[0]) {
+          req.dbuser = {
+            nickname: result[0].nickname ?? undefined,
+            discordtag: result[0].discordtag,
+            discordid: result[0].discordid,
+            clanid: result[0].clanid ?? undefined,
+            clanname: result[0].clanname ?? undefined,
+            leaderid: result[0].leaderid ?? undefined,
+            serverdiscord: result[0].serverdiscord ?? undefined,
+          };
+          next();
+        }
+        if (err) {
+          console.log('err', err);
+          next();
+        }
+      },
+    );
+  } else {
+    next();
+  }
+});
+
 await server.register(rateLimit, {
   global: true,
   max: 100,
