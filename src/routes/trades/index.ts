@@ -11,15 +11,45 @@ const routes: FastifyPluginAsync = async (server) => {
         summary: 'getTrades',
         operationId: 'getTrades',
         tags: ['trades'],
+        querystring: {
+          type: 'object',
+          required: [],
+          properties: {
+            pageSize: {
+              type: 'integer',
+              default: 10,
+              minimum: 1,
+              maximum: 100,
+            },
+            page: {
+              type: 'integer',
+              default: 1,
+              minimum: 1,
+            },
+            type: {
+              type: 'string',
+              description: 'Type of trade',
+              enum: ['Demand', 'Supply'],
+            },
+            resource: {
+              type: 'string',
+              description: 'Type of resource. Example Aloe',
+            },
+            region: {
+              type: 'string',
+              description: 'Region of the trade. EU, NA, SA , ASIA, OCE',
+            },
+          },
+        },
         response: {
           200: Type.Array(TradeSchema),
         },
       },
     },
     (request, reply) => {
-      const pageSize: number =
+      let pageSize: number =
         request.query?.pageSize && request.query?.pageSize > 0 ? request.query.pageSize : 10;
-      const page: number = request.query?.page && request.query.page > 0 ? request.query.page : 1;
+      let page: number = request.query?.page && request.query.page > 0 ? request.query.page : 1;
       let type: string = request.query?.type ? request.query.type : 'Supply';
       const resource: string | undefined = request.query?.resource
         ? server.mysql.escape(request.query.resource)
@@ -27,6 +57,13 @@ const routes: FastifyPluginAsync = async (server) => {
       const region: string | undefined = request.query?.region
         ? server.mysql.escape(request.query.region)
         : undefined;
+
+      if (pageSize < 1) {
+        pageSize = 1;
+      }
+      if (page < 1) {
+        page = 1;
+      }
 
       const offset = pageSize * (page - 1);
 
@@ -61,6 +98,117 @@ const routes: FastifyPluginAsync = async (server) => {
           return reply.code(503);
         }
       });
+    },
+  );
+  server.post<{ Reply }>(
+    '/',
+    {
+      onRequest: [server.authenticate],
+      schema: {
+        description: 'For add a trade',
+        summary: 'createTrade',
+        operationId: 'createTrade',
+        tags: ['trades'],
+        querystring: {
+          type: 'object',
+          required: ['type', 'resource', 'region', 'price'],
+          properties: {
+            type: {
+              type: 'string',
+              description: 'Type of trade',
+              enum: ['Demand', 'Supply'],
+            },
+            resource: {
+              type: 'string',
+              description: 'Type of resource. Example Aloe',
+            },
+            amount: {
+              type: 'integer',
+              description: 'Amount of the resource',
+            },
+            quality: {
+              type: 'integer',
+              description: 'Quality of the resource. Max 100',
+            },
+            region: {
+              type: 'string',
+              description: 'Region of the trade. EU, NA, SA , ASIA, OCE',
+            },
+            price: {
+              type: 'integer',
+              description: 'Price per resource',
+            },
+          },
+        },
+        response: {
+          201: Type.Object({
+            message: Type.String(),
+          }),
+        },
+      },
+    },
+    (request, reply) => {
+      let type: string = request.query?.type ? request.query.type : 'Supply';
+      const resource: string = request.query?.resource ? request.query.resource : 'Aloe';
+      let amount: number =
+        request.query?.amount && request.query.amount > 0 ? request.query.amount : 1;
+      let quality: number =
+        request.query?.quality && request.query.quality > 0 ? request.query.quality : 0;
+      let region: string | undefined = request.query?.region ? request.query.region : 'EU-Official';
+      let price: number = request.query?.price && request.query.price > 0 ? request.query.price : 0;
+
+      if (type !== 'Demand') {
+        type = 'Supply';
+      }
+
+      if (request.dbuser && resource.length < 100) {
+        server.mysql.query(
+          'select * FROM clusters WHERE CONCAT_WS(' - ', region, name) = ?',
+          [region],
+          (err, result) => {
+            if (result && result[0]) {
+              console.log(result[0]);
+            } else {
+              region = 'EU-Official';
+            }
+            if (err) {
+              region = 'EU-Official';
+            }
+          },
+        );
+
+        if (amount < 0) {
+          amount = 0;
+        }
+        if (quality < 0) {
+          quality = 0;
+        }
+        if (quality > 100) {
+          quality = 100;
+        }
+        if (price < 0) {
+          price = 0;
+        }
+
+        const discordId = String(request.dbuser.discordid);
+
+        server.mysql.query(
+          'insert into trades(discordid,type,resource,amount,quality,region,price) values(?,?,?,?,?,?,?)',
+          [discordId, type, resource, amount, quality, region, price],
+          (err, result) => {
+            if (result) {
+              return reply.code(201).send({
+                message: 'Trade created',
+              });
+            }
+            if (err) {
+              return reply.code(503);
+            }
+          },
+        );
+      } else {
+        return reply.code(401);
+      }
     },
   );
 };
