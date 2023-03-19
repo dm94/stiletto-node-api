@@ -50,7 +50,7 @@ const routes: FastifyPluginAsync = async (server) => {
       let pageSize: number =
         request.query?.pageSize && request.query?.pageSize > 0 ? request.query.pageSize : 10;
       let page: number = request.query?.page && request.query.page > 0 ? request.query.page : 1;
-      let type: string = request.query?.type ? request.query.type : 'Supply';
+      let type: string | undefined = request.query?.type ? request.query.type : undefined;
       const resource: string | undefined = request.query?.resource
         ? server.mysql.escape(request.query.resource)
         : undefined;
@@ -67,10 +67,12 @@ const routes: FastifyPluginAsync = async (server) => {
 
       const offset = pageSize * (page - 1);
 
-      if (type !== 'Demand') {
-        type = 'Supply';
+      if (type) {
+        if (type !== 'Demand') {
+          type = 'Supply';
+        }
+        type = server.mysql.escape(type);
       }
-      type = server.mysql.escape(type);
 
       let sql =
         'select trades.idtrade, trades.discordid, trades.type, trades.resource, trades.amount, trades.quality, trades.region, trades.price, users.nickname, users.discordtag from trades, users where trades.discordid=users.discordID';
