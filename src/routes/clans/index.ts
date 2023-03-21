@@ -1,9 +1,10 @@
+import { getClansRequest } from '@customtypes/requests/clans';
 import { Type } from '@sinclair/typebox';
 import { FastifyPluginAsync } from 'fastify';
 import { ClanInfo, ClanInfoSchema } from '../../types/clans';
 
 const routes: FastifyPluginAsync = async (server) => {
-  server.get<{ Reply: ClanInfo[] }>(
+  server.get<getClansRequest, { Reply: ClanInfo[] }>(
     '/',
     {
       schema: {
@@ -67,8 +68,7 @@ const routes: FastifyPluginAsync = async (server) => {
 
       server.mysql.query(sql, (err, result) => {
         if (result) {
-          const clanList: ClanInfo[] = result;
-          return reply.code(200).send(clanList);
+          return reply.code(200).send(result);
         }
         if (err) {
           return reply.code(503);
