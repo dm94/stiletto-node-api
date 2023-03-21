@@ -1,9 +1,10 @@
 import { FastifyPluginAsync } from 'fastify';
 import { TradeInfo, TradeSchema } from '@customtypes/trades';
 import { Type } from '@sinclair/typebox';
+import { createTradeRequest, getTradesRequest } from '@customtypes/requests/trades';
 
 const routes: FastifyPluginAsync = async (server) => {
-  server.get<{ Reply: TradeInfo }>(
+  server.get<getTradesRequest, { Reply: TradeInfo }>(
     '/',
     {
       schema: {
@@ -93,8 +94,7 @@ const routes: FastifyPluginAsync = async (server) => {
 
       server.mysql.query(sql, (err, result) => {
         if (result) {
-          const tradeList: TradeInfo[] = result;
-          return reply.code(200).send(tradeList);
+          return reply.code(200).send(result);
         }
         if (err) {
           return reply.code(503);
@@ -102,7 +102,7 @@ const routes: FastifyPluginAsync = async (server) => {
       });
     },
   );
-  server.post<{ Reply }>(
+  server.post<createTradeRequest>(
     '/',
     {
       onRequest: [server.authenticate],
@@ -165,7 +165,7 @@ const routes: FastifyPluginAsync = async (server) => {
 
       if (request.dbuser && resource.length < 100) {
         server.mysql.query(
-          'select * FROM clusters WHERE CONCAT_WS(' - ', region, name) = ?',
+          "select * FROM clusters WHERE CONCAT_WS(' - ', region, name) = ?",
           [region],
           (err, result) => {
             if (result && result[0]) {
