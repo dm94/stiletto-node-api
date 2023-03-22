@@ -1,10 +1,14 @@
 import { FastifyPluginAsync } from 'fastify';
 import { TradeInfo, TradeSchema } from '@customtypes/trades';
 import { Type } from '@sinclair/typebox';
-import { createTradeRequest, getTradesRequest } from '@customtypes/requests/trades';
+import {
+  DeleteTradeRequest,
+  CreateTradeRequest,
+  GetTradesRequest,
+} from '@customtypes/requests/trades';
 
 const routes: FastifyPluginAsync = async (server) => {
-  server.get<getTradesRequest, { Reply: TradeInfo }>(
+  server.get<GetTradesRequest, { Reply: TradeInfo }>(
     '/',
     {
       schema: {
@@ -102,7 +106,7 @@ const routes: FastifyPluginAsync = async (server) => {
       });
     },
   );
-  server.post<createTradeRequest>(
+  server.post<CreateTradeRequest>(
     '/',
     {
       onRequest: [server.authenticate],
@@ -142,6 +146,11 @@ const routes: FastifyPluginAsync = async (server) => {
             },
           },
         },
+        security: [
+          {
+            token: [],
+          },
+        ],
         response: {
           201: Type.Object({
             message: Type.String(),
@@ -210,6 +219,54 @@ const routes: FastifyPluginAsync = async (server) => {
         );
       } else {
         return reply.code(401);
+      }
+    },
+  );
+  server.delete<DeleteTradeRequest>(
+    '/:tradeId',
+    {
+      onRequest: [server.authenticate],
+      schema: {
+        description: 'Delete the trade',
+        summary: 'deleteTrade',
+        operationId: 'deleteTrade',
+        tags: ['trades'],
+        security: [
+          {
+            token: [],
+          },
+        ],
+        response: {
+          204: Type.Object({
+            message: Type.String(),
+          }),
+        },
+      },
+    },
+    (request, reply) => {
+      if (request?.params?.tradeId) {
+        if (request.dbuser) {
+          const tradeId = Number(request.params.tradeId);
+          const discordId = String(request.dbuser.discordid);
+          server.mysql.query(
+            'delete from trades where idtrade=? and discordid=?',
+            [tradeId, discordId],
+            (err, result) => {
+              if (result) {
+                return reply.code(204).send({
+                  message: 'Trade deleted',
+                });
+              }
+              if (err) {
+                return reply.code(503);
+              }
+            },
+          );
+        } else {
+          return reply.code(401);
+        }
+      } else {
+        return reply.code(400);
       }
     },
   );

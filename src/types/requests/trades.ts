@@ -1,6 +1,6 @@
 import { RequestGenericInterface } from 'fastify';
 
-export interface createTradeRequest extends RequestGenericInterface {
+export interface CreateTradeRequest extends RequestGenericInterface {
   Querystring: {
     type: string;
     resource: string;
@@ -11,12 +11,18 @@ export interface createTradeRequest extends RequestGenericInterface {
   };
 }
 
-export interface getTradesRequest extends RequestGenericInterface {
+export interface GetTradesRequest extends RequestGenericInterface {
   Querystring: {
     pageSize?: number;
     page?: number;
     type?: string;
     resource?: string;
     region?: string;
+  };
+}
+
+export interface DeleteTradeRequest extends RequestGenericInterface {
+  Params: {
+    tradeId: number;
   };
 }

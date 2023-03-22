@@ -1,6 +1,6 @@
 import { RequestGenericInterface } from 'fastify';
 
-export interface getClansRequest extends RequestGenericInterface {
+export interface GetClansRequest extends RequestGenericInterface {
   Querystring: {
     pageSize?: number;
     page?: number;

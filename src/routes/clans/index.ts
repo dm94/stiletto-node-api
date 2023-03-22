@@ -1,10 +1,10 @@
-import { getClansRequest } from '@customtypes/requests/clans';
+import { GetClansRequest } from '@customtypes/requests/clans';
 import { Type } from '@sinclair/typebox';
 import { FastifyPluginAsync } from 'fastify';
 import { ClanInfo, ClanInfoSchema } from '../../types/clans';
 
 const routes: FastifyPluginAsync = async (server) => {
-  server.get<getClansRequest, { Reply: ClanInfo[] }>(
+  server.get<GetClansRequest, { Reply: ClanInfo[] }>(
     '/',
     {
       schema: {

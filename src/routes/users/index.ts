@@ -2,7 +2,7 @@ import { FastifyPluginAsync } from 'fastify';
 import { UserInfo, UserSchema } from '@customtypes/user';
 import { Type } from '@sinclair/typebox';
 import { sendDiscordMessage } from '@services/DiscordWebhook';
-import { addNickRequest } from '@customtypes/requests/users';
+import { AddNickRequest } from '@customtypes/requests/users';
 
 const routes: FastifyPluginAsync = async (server) => {
   server.get<{ Reply: UserInfo }>(
@@ -51,7 +51,7 @@ const routes: FastifyPluginAsync = async (server) => {
       );
     },
   );
-  server.put<addNickRequest, { Reply }>(
+  server.put<AddNickRequest, { Reply }>(
     '/',
     {
       onRequest: [server.authenticate],
