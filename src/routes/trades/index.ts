@@ -159,13 +159,13 @@ const routes: FastifyPluginAsync = async (server) => {
       },
     },
     (request, reply) => {
-      let type: string = request.query?.type ? request.query.type : 'Supply';
-      const resource: string = request.query?.resource ? request.query.resource : 'Aloe';
+      let type: string = request.query?.type ?? 'Supply';
+      const resource: string = request.query?.resource ?? 'Aloe';
       let amount: number =
         request.query?.amount && request.query.amount > 0 ? request.query.amount : 1;
       let quality: number =
         request.query?.quality && request.query.quality > 0 ? request.query.quality : 0;
-      let region: string | undefined = request.query?.region ? request.query.region : 'EU-Official';
+      let region: string | undefined = request.query?.region ?? undefined;
       let price: number = request.query?.price && request.query.price > 0 ? request.query.price : 0;
 
       if (type !== 'Demand') {
@@ -173,20 +173,19 @@ const routes: FastifyPluginAsync = async (server) => {
       }
 
       if (request.dbuser && resource.length < 100) {
-        server.mysql.query(
-          "select * FROM clusters WHERE CONCAT_WS(' - ', region, name) = ?",
-          [region],
-          (err, result) => {
-            if (result && result[0]) {
-              console.log(result[0]);
-            } else {
-              region = 'EU-Official';
-            }
-            if (err) {
-              region = 'EU-Official';
-            }
-          },
-        );
+        if (region) {
+          server.mysql.query(
+            "select * FROM clusters WHERE CONCAT_WS(' - ', region, name) = ?",
+            [region],
+            (err, result) => {
+              if ((result && !result[0]) || err) {
+                region = 'EU-Official';
+              }
+            },
+          );
+        } else {
+          region = 'EU-Official';
+        }
 
         if (amount < 0) {
           amount = 0;
@@ -254,9 +253,7 @@ const routes: FastifyPluginAsync = async (server) => {
             [tradeId, discordId],
             (err, result) => {
               if (result) {
-                return reply.code(204).send({
-                  message: 'Trade deleted',
-                });
+                return reply.code(204).send();
               }
               if (err) {
                 return reply.code(503).send();

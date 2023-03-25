@@ -65,19 +65,25 @@ const routes: FastifyPluginAsync = async (server) => {
       },
     },
     (request, reply) => {
-      let bearer = request.headers.authorization;
-      bearer = bearer?.replace('Bearer', '').trim();
-
-      const dataupdate = request.query?.dataupdate;
+      if (!request?.dbuser) {
+        reply.code(401);
+        return new Error('Invalid token JWT');
+      }
+      const dataupdate: string | undefined = request.query?.dataupdate;
 
       if (dataupdate) {
         server.mysql.query(
-          'update users set nickname=? where token=?',
-          [dataupdate, bearer],
+          'update users set nickname=? where discordID=?',
+          [dataupdate, request.dbuser.discordid],
           (err, result) => {
-            return reply.code(202).send({
-              message: 'The nick to user has been added correctly',
-            });
+            if (result) {
+              return reply.code(202).send({
+                message: 'The nick to user has been added correctly',
+              });
+            }
+            if (err) {
+              return reply.code(503).send();
+            }
           },
         );
       } else {
@@ -107,32 +113,20 @@ const routes: FastifyPluginAsync = async (server) => {
       },
     },
     (request, reply) => {
-      let bearer = request.headers.authorization;
-      bearer = bearer?.replace('Bearer', '').trim();
+      if (request.dbuser?.discordid) {
+        sendDiscordMessage(
+          JSON.stringify({
+            content: `User ${request.dbuser.discordid} wants to delete his account`,
+            username: 'stiletto.live',
+            tts: true,
+          }),
+        );
 
-      server.mysql.query(
-        'select users.nickname, users.discordtag, users.discordID discordid, users.clanid, clans.name clanname, clans.leaderid, clans.discordid serverdiscord from users left join clans on users.clanid=clans.clanid where users.token=?',
-        bearer,
-        (err, result) => {
-          if (result && result[0]) {
-            sendDiscordMessage(
-              JSON.stringify({
-                content: `User ${result[0].discordid} wants to delete his account`,
-                username: 'stiletto.live',
-                tts: true,
-              }),
-            );
-
-            return reply.code(204).send({
-              message: 'The admin has been notified to delete your user',
-            });
-          }
-          if (err) {
-            reply.code(401);
-            return new Error('Invalid token JWT');
-          }
-        },
-      );
+        return reply.code(204).send();
+      } else {
+        reply.code(401);
+        return new Error('Invalid token JWT');
+      }
     },
   );
 };
