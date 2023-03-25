@@ -231,6 +231,12 @@ const routes: FastifyPluginAsync = async (server) => {
         summary: 'deleteTrade',
         operationId: 'deleteTrade',
         tags: ['trades'],
+        params: {
+          type: 'object',
+          properties: {
+            tradeId: { type: 'integer' },
+          },
+        },
         security: [
           {
             token: [],

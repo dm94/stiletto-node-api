@@ -22,6 +22,12 @@ export interface CreateClanRequest extends RequestGenericInterface {
 
 export interface DeleteClanRequest extends RequestGenericInterface {
   Params: {
-    clanId: number;
+    clanid: number;
+  };
+}
+
+export interface GetClanRequest extends RequestGenericInterface {
+  Params: {
+    clanid: number;
   };
 }

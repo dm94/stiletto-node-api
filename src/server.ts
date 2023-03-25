@@ -119,6 +119,7 @@ if (process.env.NODE_ENV === NodeEnv.development) {
 
 await server.register(autoLoad, {
   dir: join(__dirname, 'routes'),
+  routeParams: true,
 });
 
 await server.ready();

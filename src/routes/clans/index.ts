@@ -1,5 +1,10 @@
 import { ClanInfo, ClanInfoSchema } from '@customtypes/clans';
-import { CreateClanRequest, DeleteClanRequest, GetClansRequest } from '@customtypes/requests/clans';
+import {
+  CreateClanRequest,
+  DeleteClanRequest,
+  GetClanRequest,
+  GetClansRequest,
+} from '@customtypes/requests/clans';
 import { Type } from '@sinclair/typebox';
 import { FastifyPluginAsync } from 'fastify';
 
@@ -264,78 +269,6 @@ const routes: FastifyPluginAsync = async (server) => {
       });
 
       return reply.code(204).send();
-    },
-  );
-  server.delete<DeleteClanRequest>(
-    '/:clanId',
-    {
-      onRequest: [server.authenticate],
-      schema: {
-        description:
-          'Delete a clan. It is necessary to be the leader of the clan in order to perform this action',
-        summary: 'deleteClan',
-        operationId: 'deleteClan',
-        tags: ['clans'],
-        security: [
-          {
-            token: [],
-          },
-        ],
-        response: {
-          204: Type.Object({
-            message: Type.String(),
-          }),
-        },
-      },
-    },
-    (request, reply) => {
-      if (request?.params?.clanId) {
-        if (!request?.dbuser) {
-          reply.code(401);
-          return new Error('Invalid token JWT');
-        }
-        if (!request?.dbuser.clanid) {
-          reply.code(401);
-          return new Error('You do not have a clan');
-        }
-        if (Number(request.dbuser.clanid) !== Number(request.params.clanId)) {
-          reply.code(401);
-          return new Error('You are not the leader of this clan');
-        }
-        const clanId = Number(request.params.clanId);
-        const discordId = String(request.dbuser.discordid);
-        server.mysql.query(
-          'delete from clans where clanid=? and leaderid=?',
-          [clanId, discordId],
-          (err) => {
-            if (err) {
-              return reply.code(503).send();
-            }
-          },
-        );
-
-        server.mysql.query('update users set clanid=null where clanid=?', [clanId], (err) => {
-          if (err) {
-            return reply.code(503).send();
-          }
-        });
-
-        server.mysql.query('delete from diplomacy where idcreatorclan=?', [clanId], (err) => {
-          if (err) {
-            return reply.code(503).send();
-          }
-        });
-
-        server.mysql.query('delete from clanpermissions where clanid=?', [clanId], (err) => {
-          if (err) {
-            return reply.code(503).send();
-          }
-        });
-
-        return reply.code(204).send();
-      } else {
-        return reply.code(400).send();
-      }
     },
   );
 };
