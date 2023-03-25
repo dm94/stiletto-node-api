@@ -1,5 +1,5 @@
 import { ClanInfo, ClanInfoSchema } from '@customtypes/clans';
-import { GetClansRequest } from '@customtypes/requests/clans';
+import { CreateClanRequest, DeleteClanRequest, GetClansRequest } from '@customtypes/requests/clans';
 import { Type } from '@sinclair/typebox';
 import { FastifyPluginAsync } from 'fastify';
 
@@ -71,9 +71,218 @@ const routes: FastifyPluginAsync = async (server) => {
           return reply.code(200).send(result);
         }
         if (err) {
-          return reply.code(503);
+          return reply.code(503).send();
         }
       });
+    },
+  );
+  server.post<CreateClanRequest>(
+    '/',
+    {
+      onRequest: [server.authenticate],
+      schema: {
+        description: 'To create a new clan',
+        summary: 'createClan',
+        operationId: 'createClan',
+        tags: ['clans'],
+        querystring: {
+          type: 'object',
+          required: ['clanname'],
+          properties: {
+            clanname: {
+              type: 'string',
+              description: 'Name of Clan',
+            },
+            clancolor: {
+              type: 'string',
+              description: 'The colour of the clan in hexadecimal',
+            },
+            clandiscord: {
+              type: 'string',
+              description: 'Discord server invitation code',
+            },
+            region: {
+              type: 'string',
+              description: 'Region of the clan',
+            },
+            symbol: {
+              type: 'string',
+              description: 'Symbol of the clan',
+            },
+            recruit: {
+              type: 'boolean',
+            },
+          },
+        },
+        security: [
+          {
+            token: [],
+          },
+        ],
+        response: {
+          201: Type.Object({
+            message: Type.String(),
+          }),
+        },
+      },
+    },
+    (request, reply) => {
+      const name: string | undefined = request.query?.clanname
+        ? server.mysql.escape(request.query.clanname)
+        : undefined;
+      let region: string | undefined = request.query?.region
+        ? server.mysql.escape(request.query.region)
+        : undefined;
+      const color: string | undefined = request.query?.clancolor
+        ? server.mysql.escape(request.query.clancolor)
+        : undefined;
+      const discord: string | undefined = request.query?.clandiscord
+        ? server.mysql.escape(request.query.clandiscord)
+        : undefined;
+      const symbol: string | undefined = request.query?.symbol
+        ? server.mysql.escape(request.query.symbol)
+        : undefined;
+      const recruit: boolean = request.query?.recruit ?? true;
+
+      if (!request?.dbuser) {
+        reply.code(401);
+        return new Error('Invalid token JWT');
+      }
+
+      if (request.dbuser.clanid) {
+        return reply.code(405).send({
+          message: 'You already have a clan',
+        });
+      }
+
+      if (
+        name &&
+        name.length < 50 &&
+        name.length > 3 &&
+        (!discord || discord.length < 10) &&
+        (!color || color.length < 10) &&
+        (!region || region.length < 10) &&
+        (!symbol || symbol.length < 5)
+      ) {
+        if (region) {
+          server.mysql.query(
+            "select * FROM clusters WHERE CONCAT_WS(' - ', region, name) = ?",
+            [region],
+            (err, result) => {
+              if ((result && !result[0]) || err) {
+                region = 'EU-Official';
+              }
+            },
+          );
+        } else {
+          region = 'EU-Official';
+        }
+
+        const date = new Date().toISOString().split('T')[0];
+
+        server.mysql.query(
+          'insert into clans(name,leaderid,invitelink,flagcolor,creationdate, recruitment, region, symbol) values(?,?,?,?,?,?,?,?)',
+          [name, request.dbuser.discordid, discord, color, date, recruit, region, symbol],
+          (err, result) => {
+            if (result) {
+              server.mysql.query(
+                'select clanid from clans where leaderid=?',
+                [request.dbuser.discordid],
+                (erro, result1) => {
+                  if (result1 && result1[0]?.clanid) {
+                    const clanId = result1[0].clanid;
+                    server.mysql.query(
+                      'update users set clanid=? where discordID=?',
+                      [clanId, request.dbuser.discordid],
+                      (error, result2) => {
+                        if (result2) {
+                          return reply.code(201).send({
+                            message: 'Clan created',
+                          });
+                        } else if (error) {
+                          return reply.code(503).send();
+                        }
+                      },
+                    );
+                  } else if (erro) {
+                    return reply.code(503).send();
+                  }
+                },
+              );
+            } else if (err) {
+              return reply.code(503).send();
+            }
+          },
+        );
+      } else {
+        return reply.code(400).send();
+      }
+    },
+  );
+  server.delete<DeleteClanRequest>(
+    '/:clanId',
+    {
+      onRequest: [server.authenticate],
+      schema: {
+        description:
+          'Delete a clan. It is necessary to be the leader of the clan in order to perform this action',
+        summary: 'deleteClan',
+        operationId: 'deleteClan',
+        tags: ['clans'],
+        security: [
+          {
+            token: [],
+          },
+        ],
+        response: {
+          204: Type.Object({
+            message: Type.String(),
+          }),
+        },
+      },
+    },
+    (request, reply) => {
+      if (request?.params?.clanId) {
+        if (!request?.dbuser) {
+          reply.code(401);
+          return new Error('Invalid token JWT');
+        }
+        if (!request?.dbuser.clanid) {
+          reply.code(401);
+          return new Error('You do not have a clan');
+        }
+        if (Number(request.dbuser.clanid) !== Number(request.params.clanId)) {
+          reply.code(401);
+          return new Error('You are not the leader of this clan');
+        }
+        const clanId = Number(request.params.clanId);
+        const discordId = String(request.dbuser.discordid);
+        server.mysql.query(
+          'delete from clans where clanid=? and leaderid=?',
+          [clanId, discordId],
+          (err) => {
+            if (err) {
+              return reply.code(503).send();
+            }
+          },
+        );
+
+        server.mysql.query('update users set clanid=null where clanid=?', [clanId], (err) => {
+          if (err) {
+            return reply.code(503).send();
+          }
+        });
+
+        server.mysql.query('delete from diplomacy where idcreatorclan=?', [clanId], (err) => {
+          if (err) {
+            return reply.code(503).send();
+          }
+        });
+
+        return reply.code(204).send();
+      } else {
+        return reply.code(400).send();
+      }
     },
   );
 };

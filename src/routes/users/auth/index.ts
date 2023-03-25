@@ -30,7 +30,7 @@ const routes: FastifyPluginAsync = async (server) => {
       try {
         return await getLoginInfo(server, request, reply);
       } catch (e) {
-        reply.code(500);
+        reply.code(500).send();
       }
     },
   );

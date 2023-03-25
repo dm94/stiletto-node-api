@@ -24,7 +24,7 @@ const routes: FastifyPluginAsync = async (server) => {
             return reply.code(200).send(result);
           }
           if (err) {
-            return reply.code(503);
+            return reply.code(503).send();
           }
         },
       );

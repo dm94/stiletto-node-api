@@ -53,11 +53,13 @@ server.decorate('authenticate', async function (request, reply) {
   try {
     await request.jwtVerify();
   } catch (err) {
-    reply.send(err);
+    reply.code(401);
+    return new Error('Invalid token JWT');
   }
 });
 
-server.addHook('onRequest', (req, reply, next) => {
+server.decorateRequest('dbuser', undefined);
+server.addHook('onRequest', (req, reply, done) => {
   let bearer = req.headers.authorization;
   bearer = bearer?.replace('Bearer', '').trim();
   if (bearer) {
@@ -75,16 +77,15 @@ server.addHook('onRequest', (req, reply, next) => {
             leaderid: result[0].leaderid ?? undefined,
             serverdiscord: result[0].serverdiscord ?? undefined,
           };
-          next();
         }
         if (err) {
           console.log('err', err);
-          next();
         }
+        done();
       },
     );
   } else {
-    next();
+    done();
   }
 });
 
@@ -111,6 +112,7 @@ server.setNotFoundHandler(
 await server.register(config);
 
 if (process.env.NODE_ENV === NodeEnv.development) {
+  //@ts-ignore
   await server.register(swagger, schema);
   await server.register(swaggerUi, { routePrefix: '/doc' });
 }

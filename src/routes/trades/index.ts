@@ -101,7 +101,7 @@ const routes: FastifyPluginAsync = async (server) => {
           return reply.code(200).send(result);
         }
         if (err) {
-          return reply.code(503);
+          return reply.code(503).send();
         }
       });
     },
@@ -213,12 +213,13 @@ const routes: FastifyPluginAsync = async (server) => {
               });
             }
             if (err) {
-              return reply.code(503);
+              return reply.code(503).send();
             }
           },
         );
       } else {
-        return reply.code(401);
+        reply.code(401);
+        return new Error('Invalid token JWT');
       }
     },
   );
@@ -258,15 +259,16 @@ const routes: FastifyPluginAsync = async (server) => {
                 });
               }
               if (err) {
-                return reply.code(503);
+                return reply.code(503).send();
               }
             },
           );
         } else {
-          return reply.code(401);
+          reply.code(401);
+          return new Error('Invalid token JWT');
         }
       } else {
-        return reply.code(400);
+        return reply.code(400).send();
       }
     },
   );

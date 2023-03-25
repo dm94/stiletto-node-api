@@ -6,6 +6,7 @@ import {
   RawServerBase,
   RawServerDefault,
 } from 'fastify';
+import { UserInfo } from '@customtypes/user';
 
 declare module 'fastify' {
   export interface FastifyInstance<
