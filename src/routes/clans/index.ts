@@ -127,21 +127,11 @@ const routes: FastifyPluginAsync = async (server) => {
       },
     },
     (request, reply) => {
-      const name: string | undefined = request.query?.clanname
-        ? server.mysql.escape(request.query.clanname)
-        : undefined;
-      let region: string | undefined = request.query?.region
-        ? server.mysql.escape(request.query.region)
-        : undefined;
-      const color: string | undefined = request.query?.clancolor
-        ? server.mysql.escape(request.query.clancolor)
-        : undefined;
-      const discord: string | undefined = request.query?.clandiscord
-        ? server.mysql.escape(request.query.clandiscord)
-        : undefined;
-      const symbol: string | undefined = request.query?.symbol
-        ? server.mysql.escape(request.query.symbol)
-        : undefined;
+      const name: string | undefined = request.query?.clanname ?? undefined;
+      let region: string | undefined = request.query?.region ?? undefined;
+      const color: string | undefined = request.query?.clancolor ?? undefined;
+      const discord: string | undefined = request.query?.clandiscord ?? undefined;
+      const symbol: string | undefined = request.query?.symbol ?? undefined;
       const recruit: boolean = request.query?.recruit ?? true;
 
       if (!request?.dbuser) {
@@ -219,6 +209,63 @@ const routes: FastifyPluginAsync = async (server) => {
       }
     },
   );
+  server.delete(
+    '/',
+    {
+      onRequest: [server.authenticate],
+      schema: {
+        description: 'Leave a clan',
+        summary: 'leaveClan',
+        operationId: 'leaveClan',
+        tags: ['clans'],
+        security: [
+          {
+            token: [],
+          },
+        ],
+        response: {
+          204: Type.Object({
+            message: Type.String(),
+          }),
+        },
+      },
+    },
+    (request, reply) => {
+      if (!request?.dbuser) {
+        reply.code(401);
+        return new Error('Invalid token JWT');
+      }
+      if (!request?.dbuser.clanid) {
+        reply.code(401);
+        return new Error('You do not have a clan');
+      }
+
+      if (request?.dbuser.discordid === request?.dbuser.leaderid) {
+        reply.code(405);
+        return new Error("You can't leave a clan if you are the clan leader");
+      }
+
+      const clanId = Number(request.dbuser.clanid);
+      const discordId = String(request.dbuser.discordid);
+      server.mysql.query(
+        'delete from clanpermissions where discordID=? and clanid=?',
+        [discordId, clanId],
+        (err) => {
+          if (err) {
+            return reply.code(503).send();
+          }
+        },
+      );
+
+      server.mysql.query('update users set clanid=null where discordID=?', [discordId], (err) => {
+        if (err) {
+          return reply.code(503).send();
+        }
+      });
+
+      return reply.code(204).send();
+    },
+  );
   server.delete<DeleteClanRequest>(
     '/:clanId',
     {
@@ -274,6 +321,12 @@ const routes: FastifyPluginAsync = async (server) => {
         });
 
         server.mysql.query('delete from diplomacy where idcreatorclan=?', [clanId], (err) => {
+          if (err) {
+            return reply.code(503).send();
+          }
+        });
+
+        server.mysql.query('delete from clanpermissions where clanid=?', [clanId], (err) => {
           if (err) {
             return reply.code(503).send();
           }
