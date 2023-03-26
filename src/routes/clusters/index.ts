@@ -1,4 +1,4 @@
-import { ClusterInfo, ClusterInfoSchema } from '@customtypes/clusters';
+import { ClusterInfo, ClusterSchema } from '@customtypes/clusters';
 import { Type } from '@sinclair/typebox';
 import { FastifyPluginAsync } from 'fastify';
 
@@ -12,7 +12,7 @@ const routes: FastifyPluginAsync = async (server) => {
         operationId: 'getClusters',
         tags: ['clusters'],
         response: {
-          200: Type.Array(ClusterInfoSchema),
+          200: Type.Array(ClusterSchema),
         },
       },
     },

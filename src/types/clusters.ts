@@ -1,10 +1,10 @@
 import { Static, Type } from '@sinclair/typebox';
 
-export const ClusterInfoSchema = Type.Object({
+export const ClusterSchema = Type.Object({
   region: Type.String(),
   name: Type.String(),
   clan_limit: Type.Integer(),
   crossplay: Type.Boolean(),
 });
 
-export type ClusterInfo = Static<typeof ClusterInfoSchema>;
+export type ClusterInfo = Static<typeof ClusterSchema>;

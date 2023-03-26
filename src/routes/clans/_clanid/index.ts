@@ -1,4 +1,4 @@
-import { ClanInfo, ClanInfoSchema } from '@customtypes/clans';
+import { ClanInfo, ClanSchema } from '@customtypes/clans';
 import { DeleteClanRequest, GetClanRequest, UpdateClanRequest } from '@customtypes/requests/clans';
 import { Type } from '@sinclair/typebox';
 import { FastifyPluginAsync } from 'fastify';
@@ -19,7 +19,7 @@ const routes: FastifyPluginAsync = async (server) => {
           },
         },
         response: {
-          200: ClanInfoSchema,
+          200: ClanSchema,
         },
       },
     },

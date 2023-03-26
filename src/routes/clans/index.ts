@@ -1,4 +1,4 @@
-import { ClanInfo, ClanInfoSchema } from '@customtypes/clans';
+import { ClanInfo, ClanSchema } from '@customtypes/clans';
 import {
   CreateClanRequest,
   DeleteClanRequest,
@@ -40,7 +40,7 @@ const routes: FastifyPluginAsync = async (server) => {
           },
         },
         response: {
-          200: Type.Array(ClanInfoSchema),
+          200: Type.Array(ClanSchema),
         },
       },
     },
