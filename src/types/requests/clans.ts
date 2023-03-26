@@ -45,3 +45,9 @@ export interface GetClanRequest extends RequestGenericInterface {
     clanid: number;
   };
 }
+
+export interface GetDiscordConfigRequest extends RequestGenericInterface {
+  Params: {
+    clanid: number;
+  };
+}
