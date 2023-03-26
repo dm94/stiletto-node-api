@@ -7,6 +7,7 @@ import {
   RawServerDefault,
 } from 'fastify';
 import { UserInfo } from '@customtypes/user';
+import { Permissions } from '@customtypes/permissions';
 
 declare module 'fastify' {
   export interface FastifyInstance<
@@ -22,5 +23,6 @@ declare module 'fastify' {
 declare module 'fastify' {
   export interface FastifyRequest {
     dbuser: UserInfo;
+    clanPermissions?: Permissions;
   }
 }

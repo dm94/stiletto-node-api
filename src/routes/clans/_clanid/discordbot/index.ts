@@ -1,9 +1,9 @@
 import { DiscordConfig, DiscordConfigSchema, Languages } from '@customtypes/discordconfig';
 import { GetDiscordConfigRequest, UpdateDiscordConfigRequest } from '@customtypes/requests/clans';
-import { hasPermission } from '@services/permissions';
 import { Permission } from '@customtypes/permissions';
 import { Type } from '@sinclair/typebox';
 import { FastifyPluginAsync } from 'fastify';
+import { addPermissions } from '@services/permission';
 
 const routes: FastifyPluginAsync = async (server) => {
   server.get<GetDiscordConfigRequest, { Reply: DiscordConfig }>(
@@ -71,7 +71,10 @@ const routes: FastifyPluginAsync = async (server) => {
   server.put<UpdateDiscordConfigRequest>(
     '/',
     {
-      onRequest: [server.authenticate],
+      onRequest: [
+        server.authenticate,
+        (request, reply, done) => addPermissions(server, request, done),
+      ],
       schema: {
         description: ' Update the bot Config',
         summary: 'updateBotConfig',
@@ -126,18 +129,12 @@ const routes: FastifyPluginAsync = async (server) => {
         }
 
         if (request.dbuser?.serverdiscord) {
-          if (request?.dbuser.discordid !== request?.dbuser.leaderid) {
-            const hasPermssion = await hasPermission(
-              server,
-              request.params.clanid,
-              request.dbuser.serverdiscord,
-              Permission.BOT,
-            );
-
-            if (!hasPermssion) {
-              reply.code(401);
-              return new Error('You do not have permissions to perform this action');
-            }
+          if (
+            request?.dbuser.discordid !== request?.dbuser.leaderid &&
+            (!request?.clanPermissions || !request.clanPermissions[Permission.BOT])
+          ) {
+            reply.code(401);
+            return new Error('You do not have permissions to perform this action');
           }
 
           const languaje: string = request.query?.languaje ?? Languages.EN;
@@ -147,7 +144,7 @@ const routes: FastifyPluginAsync = async (server) => {
           const walkerAlarm: boolean = request.query?.walkeralarm ?? true;
 
           if (languaje.length > 2) {
-            return reply.code(400).send();
+            return reply.code(400).send({ message: 'The language parameter is not valid' });
           }
 
           server.mysql.query(
@@ -172,8 +169,6 @@ const routes: FastifyPluginAsync = async (server) => {
                 });
               } else if (err) {
                 return reply.code(503).send();
-              } else {
-                return reply.code(404).send();
               }
             },
           );

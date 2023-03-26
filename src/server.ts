@@ -58,6 +58,7 @@ server.decorate('authenticate', async function (request, reply) {
   }
 });
 
+server.decorateRequest('clanPermissions', undefined);
 server.decorateRequest('dbuser', undefined);
 server.addHook('onRequest', (req, reply, done) => {
   let bearer = req.headers.authorization;

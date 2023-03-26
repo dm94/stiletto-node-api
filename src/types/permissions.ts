@@ -1,3 +1,5 @@
+import { Static, Type } from '@sinclair/typebox';
+
 export enum Permission {
   REQUEST = 'request',
   KICK_MEMBERS = 'kickmembers',
@@ -5,3 +7,13 @@ export enum Permission {
   BOT = 'bot',
   DIPLOMACY = 'diplomacy',
 }
+
+export const PermissionsSchema = Type.Object({
+  request: Type.Boolean(),
+  kickmembers: Type.Boolean(),
+  walkers: Type.Boolean(),
+  bot: Type.Boolean(),
+  diplomacy: Type.Boolean(),
+});
+
+export type Permissions = Static<typeof PermissionsSchema>;
