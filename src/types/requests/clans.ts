@@ -51,3 +51,16 @@ export interface GetDiscordConfigRequest extends RequestGenericInterface {
     clanid: number;
   };
 }
+
+export interface UpdateDiscordConfigRequest extends RequestGenericInterface {
+  Querystring: {
+    languaje?: string;
+    clanlog?: boolean;
+    kick?: boolean;
+    readypvp?: boolean;
+    walkeralarm?: boolean;
+  };
+  Params: {
+    clanid: number;
+  };
+}

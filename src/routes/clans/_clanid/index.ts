@@ -196,8 +196,8 @@ const routes: FastifyPluginAsync = async (server) => {
           reply.code(401);
           return new Error('You do not have a clan');
         }
-        if (Number(request.dbuser.clanid) !== Number(request.params.clanid)) {
-          reply.code(401);
+        if (request?.dbuser.discordid !== request?.dbuser.leaderid) {
+          reply.code(405);
           return new Error('You are not the leader of this clan');
         }
         const clanId = Number(request.params.clanid);
