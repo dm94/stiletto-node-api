@@ -20,6 +20,20 @@ export interface CreateClanRequest extends RequestGenericInterface {
   };
 }
 
+export interface UpdateClanRequest extends RequestGenericInterface {
+  Querystring: {
+    clanname?: string;
+    clancolor?: string;
+    clandiscord?: string;
+    recruit?: boolean;
+    region?: string;
+    symbol?: string;
+  };
+  Params: {
+    clanid: number;
+  };
+}
+
 export interface DeleteClanRequest extends RequestGenericInterface {
   Params: {
     clanid: number;
