@@ -6,6 +6,7 @@ import { version, description, author, homepage, bugs, name } from '../../packag
 import { MemberSchema } from '@customtypes/members';
 import { PermissionsSchema } from '@customtypes/permissions';
 import { MemberRequestSchema } from '@customtypes/member-request';
+import { RelationshipSchema } from '@customtypes/relationships';
 
 export const schema = {
   openapi: {
@@ -55,6 +56,7 @@ export const schema = {
         MemberSchema,
         PermissionsSchema,
         MemberRequestSchema,
+        RelationshipSchema,
       },
     },
   },
