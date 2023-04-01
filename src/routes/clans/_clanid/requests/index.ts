@@ -1,5 +1,6 @@
 import { MemberRequest, MemberRequestSchema } from '@customtypes/member-request';
 import { GetClanRequest } from '@customtypes/requests/clans';
+import { RequestClanRequest } from '@customtypes/requests/requests';
 import { Type } from '@sinclair/typebox';
 import { FastifyPluginAsync } from 'fastify';
 
@@ -55,6 +56,74 @@ const routes: FastifyPluginAsync = async (server) => {
             return reply.code(503).send();
           } else {
             return reply.code(404).send();
+          }
+        },
+      );
+    },
+  );
+  server.post<RequestClanRequest>(
+    '/',
+    {
+      onRequest: [server.authenticate],
+      schema: {
+        description: 'Add a clan application, it can only be done if you are not in a clan',
+        summary: 'sendRequest',
+        operationId: 'sendRequest',
+        tags: ['clans'],
+        params: {
+          type: 'object',
+          properties: {
+            clanid: { type: 'integer' },
+          },
+        },
+        querystring: {
+          type: 'object',
+          required: [],
+          properties: {
+            message: {
+              type: 'string',
+            },
+          },
+        },
+        security: [
+          {
+            token: [],
+          },
+        ],
+        response: {
+          201: Type.Object({
+            message: Type.String(),
+          }),
+        },
+      },
+    },
+    (request, reply) => {
+      if (!request?.dbuser) {
+        reply.code(401);
+        return new Error('Invalid token JWT');
+      }
+
+      if (request.dbuser.clanid) {
+        reply.code(405);
+        return new Error('You are already in a clan');
+      }
+
+      if (!request.params?.clanid) {
+        return reply.code(400).send();
+      }
+
+      const message: string = request.query?.message ?? '';
+      const clanId = Number(request.params.clanid);
+      server.mysql.query(
+        'insert into clanrequest(clanid,discordid,message) values(?,?,?)',
+        [clanId, request.dbuser.discordid, message],
+        (err, result) => {
+          if (result) {
+            return reply.code(201).send({
+              message: 'Request sent',
+            });
+          } else if (err) {
+            return reply.code(503).send();
           }
         },
       );
