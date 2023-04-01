@@ -1,6 +1,7 @@
 import { MemberActions } from '@customtypes/members';
 import { Permission } from '@customtypes/permissions';
 import { GetMemberRequest } from '@customtypes/requests/members';
+import { addPermissions } from '@services/permission';
 import { Type } from '@sinclair/typebox';
 import { FastifyPluginAsync } from 'fastify';
 
@@ -8,7 +9,10 @@ const routes: FastifyPluginAsync = async (server) => {
   server.put<GetMemberRequest>(
     '/',
     {
-      onRequest: [server.authenticate],
+      onRequest: [
+        server.authenticate,
+        (request, reply, done) => addPermissions(server, request, done),
+      ],
       schema: {
         description:
           'To perform the actions of kick from the clan or changing the clan leader. Only leaders can use these options',

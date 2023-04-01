@@ -1,6 +1,7 @@
 import { RequestActions } from '@customtypes/member-request';
 import { Permission } from '@customtypes/permissions';
 import { UpdateClanRequest } from '@customtypes/requests/requests';
+import { addPermissions } from '@services/permission';
 import { Type } from '@sinclair/typebox';
 import { FastifyPluginAsync } from 'fastify';
 
@@ -8,7 +9,10 @@ const routes: FastifyPluginAsync = async (server) => {
   server.put<UpdateClanRequest>(
     '/',
     {
-      onRequest: [server.authenticate],
+      onRequest: [
+        server.authenticate,
+        (request, reply, done) => addPermissions(server, request, done),
+      ],
       schema: {
         description: 'It serves to accept or reject an application for entry into a clan',
         summary: 'updateRequest',

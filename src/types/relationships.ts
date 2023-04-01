@@ -2,8 +2,11 @@ import { Static, Type } from '@sinclair/typebox';
 
 export enum TypeRelationship {
   NAP = 0,
-  ALLIE = 1,
-  ENEMY = 2,
+  ALLY = 1,
+  WAR = 2,
+  FALSE_NAP = 30,
+  FALSE_ALLY = 31,
+  FALSE_WAR = 32,
 }
 
 export const RelationshipSchema = Type.Object({
