@@ -8,6 +8,7 @@ import { PermissionsSchema } from '@customtypes/permissions';
 import { MemberRequestSchema } from '@customtypes/member-request';
 import { RelationshipSchema } from '@customtypes/relationships';
 import { MapSchema } from '@customtypes/maps';
+import { ResourceSchema } from '@customtypes/resource';
 
 export const schema = {
   openapi: {
@@ -59,6 +60,7 @@ export const schema = {
         MemberRequestSchema,
         RelationshipSchema,
         MapSchema,
+        ResourceSchema,
       },
     },
   },

@@ -8,6 +8,7 @@ import {
 } from 'fastify';
 import { UserInfo } from '@customtypes/user';
 import { Permissions } from '@customtypes/permissions';
+import { MapInfo } from '@customtypes/maps';
 
 declare module 'fastify' {
   export interface FastifyInstance<
@@ -24,5 +25,6 @@ declare module 'fastify' {
   export interface FastifyRequest {
     dbuser: UserInfo;
     clanPermissions?: Permissions;
+    mapInfo?: MapInfo;
   }
 }
