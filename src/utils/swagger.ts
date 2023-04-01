@@ -3,6 +3,7 @@ import { ClusterSchema } from '@customtypes/clusters';
 import { TradeSchema } from '@customtypes/trades';
 import { LoginSchema, UserSchema } from '@customtypes/user';
 import { version, description, author, homepage, bugs, name } from '../../package.json';
+import { MemberSchema } from '@customtypes/members';
 
 export const schema = {
   openapi: {
@@ -43,7 +44,7 @@ export const schema = {
           scheme: 'bearer',
         },
       },
-      schemas: { UserSchema, LoginSchema, ClanSchema, ClusterSchema, TradeSchema },
+      schemas: { UserSchema, LoginSchema, ClanSchema, ClusterSchema, TradeSchema, MemberSchema },
     },
   },
   hideUntagged: true,

@@ -1,10 +1,5 @@
 import { ClanInfo, ClanSchema } from '@customtypes/clans';
-import {
-  CreateClanRequest,
-  DeleteClanRequest,
-  GetClanRequest,
-  GetClansRequest,
-} from '@customtypes/requests/clans';
+import { CreateClanRequest, GetClansRequest } from '@customtypes/requests/clans';
 import { Type } from '@sinclair/typebox';
 import { FastifyPluginAsync } from 'fastify';
 
