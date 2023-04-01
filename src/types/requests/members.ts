@@ -16,3 +16,17 @@ export interface GetMemberPermissionsRequest extends RequestGenericInterface {
     memberid: string;
   };
 }
+
+export interface UpdateMemberPermissionsRequest extends RequestGenericInterface {
+  Params: {
+    clanid: number;
+    memberid: string;
+  };
+  Querystring: {
+    request: boolean;
+    kickmembers: boolean;
+    walkers: boolean;
+    bot: boolean;
+    diplomacy: boolean;
+  };
+}
