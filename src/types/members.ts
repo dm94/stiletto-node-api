@@ -1,5 +1,10 @@
 import { Static, Type } from '@sinclair/typebox';
 
+export enum MemberActions {
+  OWNER = 'owner',
+  KICK = 'kick',
+}
+
 export const MemberSchema = Type.Object({
   discordid: Type.String(),
   nickname: Type.Optional(Type.String()) || Type.Null(),
