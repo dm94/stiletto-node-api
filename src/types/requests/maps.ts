@@ -16,3 +16,15 @@ export interface GetMapRequest extends RequestGenericInterface {
     mappass: string;
   };
 }
+
+export interface EditMapRequest extends RequestGenericInterface {
+  Params: {
+    mapid: number;
+  };
+  Querystring: {
+    mappass: string;
+    mapname: string;
+    mapdate: string;
+    allowediting: boolean;
+  };
+}
