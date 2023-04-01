@@ -12,3 +12,10 @@ export interface CreateRelationshipRequest extends RequestGenericInterface {
     clanid: number;
   };
 }
+
+export interface DeleteRelationshipRequest extends RequestGenericInterface {
+  Params: {
+    clanid: number;
+    relationshipid: number;
+  };
+}
