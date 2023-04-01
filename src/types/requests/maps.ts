@@ -7,3 +7,12 @@ export interface AddMapRequest extends RequestGenericInterface {
     maptype: string;
   };
 }
+
+export interface GetMapRequest extends RequestGenericInterface {
+  Params: {
+    mapid: number;
+  };
+  Querystring: {
+    mappass: string;
+  };
+}
