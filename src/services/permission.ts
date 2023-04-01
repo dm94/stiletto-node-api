@@ -6,6 +6,8 @@ export const addPermissions = (server, req, done) => {
       (err, result) => {
         if (result && result[0]) {
           req.clanPermissions = {
+            clanid: result[0].clanid,
+            discordid: result[0].discordID,
             request: Boolean(result[0].request),
             kickmembers: Boolean(result[0].kickmembers),
             walkers: Boolean(result[0].walkers),

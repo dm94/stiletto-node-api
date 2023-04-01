@@ -9,3 +9,10 @@ export interface GetMemberRequest extends RequestGenericInterface {
     action: string;
   };
 }
+
+export interface GetMemberPermissionsRequest extends RequestGenericInterface {
+  Params: {
+    clanid: number;
+    memberid: string;
+  };
+}

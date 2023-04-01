@@ -9,6 +9,8 @@ export enum Permission {
 }
 
 export const PermissionsSchema = Type.Object({
+  clanid: Type.Integer(),
+  discordid: Type.String(),
   request: Type.Boolean(),
   kickmembers: Type.Boolean(),
   walkers: Type.Boolean(),
