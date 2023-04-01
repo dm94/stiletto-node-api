@@ -132,6 +132,72 @@ const routes: FastifyPluginAsync = async (server) => {
       );
     },
   );
+  server.delete<GetMapRequest>(
+    '/',
+    {
+      onRequest: [server.authenticate],
+      schema: {
+        description: 'Edit map data',
+        summary: 'editMap',
+        operationId: 'editMap',
+        tags: ['maps'],
+        params: {
+          type: 'object',
+          properties: {
+            mapid: { type: 'integer' },
+          },
+        },
+        security: [
+          {
+            token: [],
+          },
+        ],
+        response: {
+          204: Type.Object({
+            message: Type.String(),
+          }),
+        },
+      },
+    },
+    (request, reply) => {
+      if (!request?.dbuser) {
+        reply.code(401);
+        return new Error('Invalid token JWT');
+      }
+
+      server.mysql.query(
+        'select * from clanmaps where mapid=? and discordID=?',
+        [request.params.mapid, request.dbuser.discordid],
+        (err, result) => {
+          if (result && result[0]) {
+            server.mysql.query(
+              'delete from clanmaps where mapid=? and discordID=?',
+              [request.params.mapid, request.dbuser.discordid],
+              (err) => {
+                if (err) {
+                  return reply.code(503).send();
+                }
+              },
+            );
+            server.mysql.query(
+              'delete from resourcemap where mapid=?',
+              [request.params.mapid],
+              (err) => {
+                if (err) {
+                  return reply.code(503).send();
+                }
+              },
+            );
+            return reply.code(204).send();
+          } else if (err) {
+            return reply.code(503).send();
+          } else {
+            return reply.code(404).send();
+          }
+        },
+      );
+    },
+  );
 };
 
 export default routes;

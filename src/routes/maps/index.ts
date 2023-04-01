@@ -64,7 +64,8 @@ const routes: FastifyPluginAsync = async (server) => {
     '/',
     {
       schema: {
-        description: 'To create a map. The map type has to be one defined in the map json',
+        description:
+          'To create a map. The map type has to be one defined in the map json. The bearer is required if you want it to be assigned to a user.',
         summary: 'addMap',
         operationId: 'addMap',
         tags: ['maps'],
