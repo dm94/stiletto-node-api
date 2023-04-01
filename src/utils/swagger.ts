@@ -5,6 +5,7 @@ import { LoginSchema, UserSchema } from '@customtypes/user';
 import { version, description, author, homepage, bugs, name } from '../../package.json';
 import { MemberSchema } from '@customtypes/members';
 import { PermissionsSchema } from '@customtypes/permissions';
+import { MemberRequestSchema } from '@customtypes/member-request';
 
 export const schema = {
   openapi: {
@@ -53,6 +54,7 @@ export const schema = {
         TradeSchema,
         MemberSchema,
         PermissionsSchema,
+        MemberRequestSchema,
       },
     },
   },

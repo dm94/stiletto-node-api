@@ -8,3 +8,13 @@ export interface RequestClanRequest extends RequestGenericInterface {
     clanid: number;
   };
 }
+
+export interface UpdateClanRequest extends RequestGenericInterface {
+  Querystring: {
+    action: string;
+  };
+  Params: {
+    clanid: number;
+    requestid: string;
+  };
+}
