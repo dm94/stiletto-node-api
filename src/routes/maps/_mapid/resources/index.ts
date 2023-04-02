@@ -1,4 +1,4 @@
-import { GetMapRequest } from '@customtypes/requests/maps';
+import { AddResourceRequest, GetMapRequest } from '@customtypes/requests/maps';
 import { ResourceInfo, ResourceSchema } from '@customtypes/resource';
 import { addMapInfo } from '@services/mapinfo';
 import { Type } from '@sinclair/typebox';
@@ -75,6 +75,105 @@ const routes: FastifyPluginAsync = async (server) => {
           },
         );
       }
+    },
+  );
+  server.post<AddResourceRequest>(
+    '/',
+    {
+      onRequest: [server.authenticate, (request, reply, done) => addMapInfo(server, request, done)],
+      schema: {
+        description: 'To create a new resource in the map',
+        summary: 'addResourceMap',
+        operationId: 'addResourceMap',
+        tags: ['maps'],
+        params: {
+          type: 'object',
+          properties: {
+            mapid: { type: 'integer' },
+          },
+        },
+        querystring: {
+          type: 'object',
+          required: ['mappass', 'resourcetype', 'x', 'y'],
+          properties: {
+            mappass: {
+              type: 'string',
+              description: 'Pass for the map',
+            },
+            resourcetype: {
+              type: 'string',
+              description: 'Type of resource',
+            },
+            quality: {
+              type: 'integer',
+              description: 'Resource quality',
+            },
+            x: {
+              type: 'number',
+              description: 'Resource Coordinate X',
+            },
+            y: {
+              type: 'number',
+              description: 'Resource Coordinate Y',
+            },
+            description: {
+              type: 'string',
+              description: 'Resource description',
+            },
+            harvested: {
+              type: 'string',
+              description: 'Resource description',
+            },
+          },
+        },
+        response: {
+          201: Type.Object({
+            message: Type.String(),
+          }),
+        },
+      },
+    },
+    (request, reply) => {
+      if (!request.params.mapid || !request.query.mappass) {
+        return reply.code(400).send();
+      }
+      if (!request.mapInfo) {
+        return reply.code(401).send();
+      }
+
+      if (
+        !request.mapInfo.allowedit &&
+        !(request.dbuser && request.mapInfo.discordid === request.dbuser.discordid)
+      ) {
+        return reply.code(405).send();
+      }
+
+      const resourceType: string = request.query?.resourcetype ?? 'Aloe';
+      const x: number = request.query?.x;
+      const y: number = request.query?.x;
+      let quality: number = request.query?.quality ?? 0;
+      const description: string = request.query?.description ?? '';
+      const harvested: string = request.query?.harvested ?? new Date().toISOString().split('T')[0];
+
+      if (quality > 100) {
+        quality = 100;
+      }
+
+      const randomToken = Math.random().toString(36).slice(-8);
+
+      server.mysql.query(
+        'insert into resourcemap(mapid,resourcetype,quality,x,y,token, description, lastharvested) values(?,?,?,?,?,?,?,?)',
+        [request.params.mapid, resourceType, quality, x, y, randomToken, description, harvested],
+        (err, result) => {
+          if (result) {
+            return reply.code(201).send({
+              message: 'Added resource',
+            });
+          } else if (err) {
+            return reply.code(503).send();
+          }
+        },
+      );
     },
   );
 };

@@ -28,3 +28,18 @@ export interface EditMapRequest extends RequestGenericInterface {
     allowediting: boolean;
   };
 }
+
+export interface AddResourceRequest extends RequestGenericInterface {
+  Params: {
+    mapid: number;
+  };
+  Querystring: {
+    mappass: string;
+    resourcetype: string;
+    quality?: number;
+    x: number;
+    y: number;
+    description?: string;
+    harvested?: string;
+  };
+}
