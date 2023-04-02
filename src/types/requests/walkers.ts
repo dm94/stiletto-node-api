@@ -34,3 +34,10 @@ export interface DeleteWalkersRequest extends RequestGenericInterface {
     walkerid: string;
   };
 }
+
+export interface GetDiscordServersRequest extends RequestGenericInterface {
+  Querystring: {
+    code: string;
+    redirect: string;
+  };
+}
