@@ -5,3 +5,9 @@ export interface GetRecipeRequest extends RequestGenericInterface {
     recipetoken: string;
   };
 }
+
+export interface AddRecipeRequest extends RequestGenericInterface {
+  Querystring: {
+    items: string;
+  };
+}
