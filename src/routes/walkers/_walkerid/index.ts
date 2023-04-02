@@ -1,7 +1,7 @@
 import { FastifyPluginAsync } from 'fastify';
 import { Type } from '@sinclair/typebox';
 import { WalkerUse } from '@customtypes/walkers';
-import { EditWalkersRequest } from '@customtypes/requests/walkers';
+import { DeleteWalkersRequest, EditWalkersRequest } from '@customtypes/requests/walkers';
 import { Permission } from '@customtypes/permissions';
 import { addPermissions } from '@services/permission';
 
@@ -61,9 +61,13 @@ const routes: FastifyPluginAsync = async (server) => {
       },
     },
     (request, reply) => {
-      if (!request?.dbuser || !request?.dbuser.clanid) {
+      if (!request?.dbuser) {
         reply.code(401);
         return new Error('Invalid token JWT');
+      }
+      if (!request?.dbuser.clanid) {
+        reply.code(405);
+        return new Error('No clan');
       }
 
       const owner: string | undefined = request.query?.owner
@@ -128,6 +132,67 @@ const routes: FastifyPluginAsync = async (server) => {
             }
           },
         );
+      }
+    },
+  );
+  server.delete<DeleteWalkersRequest>(
+    '/',
+    {
+      onRequest: [
+        server.authenticate,
+        (request, reply, done) => addPermissions(server, request, done),
+      ],
+      schema: {
+        description: 'Delete the walker',
+        summary: 'deleteWalker',
+        operationId: 'deleteWalker',
+        tags: ['walkers'],
+        params: {
+          type: 'object',
+          properties: {
+            walkerid: { type: 'string' },
+          },
+        },
+        security: [
+          {
+            token: [],
+          },
+        ],
+        response: {
+          204: Type.Object({
+            message: Type.String(),
+          }),
+        },
+      },
+    },
+    (request, reply) => {
+      if (!request?.dbuser) {
+        reply.code(401);
+        return new Error('Invalid token JWT');
+      }
+      if (!request?.dbuser.clanid) {
+        reply.code(405);
+        return new Error('No clan');
+      }
+
+      if (
+        request?.dbuser.discordid === request?.dbuser.leaderid ||
+        (request?.clanPermissions && request.clanPermissions[Permission.WALKERS])
+      ) {
+        server.mysql.query(
+          'delete from walkers where walkerID=? and discorid=?',
+          [request.params.walkerid, request.dbuser.serverdiscord],
+          (err, result) => {
+            if (result) {
+              return reply.code(204).send();
+            }
+            if (err) {
+              return reply.code(503).send();
+            }
+          },
+        );
+      } else {
+        return reply.code(401).send();
       }
     },
   );

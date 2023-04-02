@@ -28,3 +28,9 @@ export interface EditWalkersRequest extends RequestGenericInterface {
     description?: string;
   };
 }
+
+export interface DeleteWalkersRequest extends RequestGenericInterface {
+  Params: {
+    walkerid: string;
+  };
+}
