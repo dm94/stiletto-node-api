@@ -10,6 +10,7 @@ import { RelationshipSchema } from '@customtypes/relationships';
 import { MapSchema } from '@customtypes/maps';
 import { ResourceSchema } from '@customtypes/resource';
 import { WalkerSchema } from '@customtypes/walkers';
+import { RecipeListSchema, RecipeSchema } from '@customtypes/recipes';
 
 export const schema = {
   openapi: {
@@ -63,6 +64,8 @@ export const schema = {
         MapSchema,
         ResourceSchema,
         WalkerSchema,
+        RecipeSchema,
+        RecipeListSchema,
       },
     },
   },
