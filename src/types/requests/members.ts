@@ -1,3 +1,4 @@
+import { MemberActions } from '@customtypes/members';
 import { RequestGenericInterface } from 'fastify/types/request';
 
 export interface GetMemberRequest extends RequestGenericInterface {
@@ -6,7 +7,7 @@ export interface GetMemberRequest extends RequestGenericInterface {
     memberid: string;
   };
   Querystring: {
-    action: string;
+    action: MemberActions;
   };
 }
 

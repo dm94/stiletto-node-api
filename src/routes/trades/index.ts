@@ -1,5 +1,5 @@
 import { FastifyPluginAsync } from 'fastify';
-import { TradeInfo, TradeSchema } from '@customtypes/trades';
+import { TradeInfo, TradeSchema, TradeType } from '@customtypes/trades';
 import { Type } from '@sinclair/typebox';
 import {
   DeleteTradeRequest,
@@ -34,7 +34,7 @@ const routes: FastifyPluginAsync = async (server) => {
             type: {
               type: 'string',
               description: 'Type of trade',
-              enum: ['Demand', 'Supply'],
+              enum: Object.values(TradeType),
             },
             resource: {
               type: 'string',
@@ -122,7 +122,7 @@ const routes: FastifyPluginAsync = async (server) => {
             type: {
               type: 'string',
               description: 'Type of trade',
-              enum: ['Demand', 'Supply'],
+              enum: Object.values(TradeType),
             },
             resource: {
               type: 'string',

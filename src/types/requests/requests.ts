@@ -1,3 +1,4 @@
+import { RequestActions } from '@customtypes/member-request';
 import { RequestGenericInterface } from 'fastify/types/request';
 
 export interface RequestClanRequest extends RequestGenericInterface {
@@ -11,7 +12,7 @@ export interface RequestClanRequest extends RequestGenericInterface {
 
 export interface UpdateClanRequest extends RequestGenericInterface {
   Querystring: {
-    action: string;
+    action: RequestActions;
   };
   Params: {
     clanid: number;

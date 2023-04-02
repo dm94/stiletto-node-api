@@ -9,6 +9,7 @@ import { MemberRequestSchema } from '@customtypes/member-request';
 import { RelationshipSchema } from '@customtypes/relationships';
 import { MapSchema } from '@customtypes/maps';
 import { ResourceSchema } from '@customtypes/resource';
+import { WalkerSchema } from '@customtypes/walkers';
 
 export const schema = {
   openapi: {
@@ -61,6 +62,7 @@ export const schema = {
         RelationshipSchema,
         MapSchema,
         ResourceSchema,
+        WalkerSchema,
       },
     },
   },

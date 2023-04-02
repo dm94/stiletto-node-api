@@ -32,7 +32,7 @@ const routes: FastifyPluginAsync = async (server) => {
           properties: {
             action: {
               type: 'string',
-              enum: ['owner', 'kick'],
+              enum: Object.values(MemberActions),
             },
           },
         },

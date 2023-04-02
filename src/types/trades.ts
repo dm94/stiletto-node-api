@@ -1,6 +1,6 @@
 import { Static, Type } from '@sinclair/typebox';
 
-enum TradeType {
+export enum TradeType {
   Supply = 'Supply',
   Demand = 'Demand',
 }

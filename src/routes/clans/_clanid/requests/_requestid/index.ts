@@ -31,7 +31,7 @@ const routes: FastifyPluginAsync = async (server) => {
           properties: {
             action: {
               type: 'string',
-              enum: ['reject', 'accept'],
+              enum: Object.values(RequestActions),
             },
           },
         },

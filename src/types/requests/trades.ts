@@ -1,8 +1,9 @@
+import { TradeType } from '@customtypes/trades';
 import { RequestGenericInterface } from 'fastify';
 
 export interface CreateTradeRequest extends RequestGenericInterface {
   Querystring: {
-    type: string;
+    type: TradeType;
     resource: string;
     amount?: number;
     quality?: number;
@@ -15,7 +16,7 @@ export interface GetTradesRequest extends RequestGenericInterface {
   Querystring: {
     pageSize?: number;
     page?: number;
-    type?: string;
+    type?: TradeType;
     resource?: string;
     region?: string;
   };
