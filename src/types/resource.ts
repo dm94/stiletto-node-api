@@ -9,6 +9,8 @@ export const ResourceSchema = Type.Object({
   y: Type.Number(),
   token: Type.Optional(Type.String()),
   typemap: Type.String(),
+  description: Type.Optional(Type.String()),
+  lastharvested: Type.Optional(Type.String()),
 });
 
 export type ResourceInfo = Static<typeof ResourceSchema>;

@@ -43,3 +43,15 @@ export interface AddResourceRequest extends RequestGenericInterface {
     harvested?: string;
   };
 }
+
+export interface EditResourceRequest extends RequestGenericInterface {
+  Params: {
+    mapid: number;
+    resourceid: number;
+  };
+  Querystring: {
+    token: string;
+    description?: string;
+    harvested?: string;
+  };
+}
