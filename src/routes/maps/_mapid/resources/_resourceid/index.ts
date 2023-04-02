@@ -1,4 +1,4 @@
-import { EditResourceRequest } from '@customtypes/requests/maps';
+import { DeleteResourceRequest, EditResourceRequest } from '@customtypes/requests/maps';
 import { Type } from '@sinclair/typebox';
 import { FastifyPluginAsync } from 'fastify';
 
@@ -80,6 +80,56 @@ const routes: FastifyPluginAsync = async (server) => {
           },
         );
       }
+    },
+  );
+  server.delete<DeleteResourceRequest>(
+    '/',
+    {
+      schema: {
+        description: 'Delete the resource',
+        summary: 'deleteResource',
+        operationId: 'deleteResource',
+        tags: ['maps'],
+        params: {
+          type: 'object',
+          properties: {
+            mapid: { type: 'integer' },
+            resourceid: { type: 'integer' },
+          },
+        },
+        querystring: {
+          type: 'object',
+          required: ['token'],
+          properties: {
+            token: {
+              type: 'string',
+              description: 'Token generated',
+            },
+          },
+        },
+        response: {
+          204: Type.Object({
+            message: Type.String(),
+          }),
+        },
+      },
+    },
+    (request, reply) => {
+      if (!request.params.resourceid || !request.query.token) {
+        return reply.code(400).send();
+      }
+
+      server.mysql.query(
+        'delete from resourcemap where mapid=? and resourceid=? and token=?',
+        [request.params.mapid, request.params.resourceid, request.query.token],
+        (err, result) => {
+          if (result) {
+            return reply.code(204).send();
+          } else if (err) {
+            return reply.code(503).send();
+          }
+        },
+      );
     },
   );
 };

@@ -55,3 +55,13 @@ export interface EditResourceRequest extends RequestGenericInterface {
     harvested?: string;
   };
 }
+
+export interface DeleteResourceRequest extends RequestGenericInterface {
+  Params: {
+    mapid: number;
+    resourceid: number;
+  };
+  Querystring: {
+    token: string;
+  };
+}
