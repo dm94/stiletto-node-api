@@ -15,3 +15,16 @@ export interface GetWalkersRequest extends RequestGenericInterface {
     description?: string;
   };
 }
+
+export interface EditWalkersRequest extends RequestGenericInterface {
+  Params: {
+    walkerid: string;
+  };
+  Querystring: {
+    owner?: string;
+    use?: WalkerUse;
+    ready?: boolean;
+    type?: string;
+    description?: string;
+  };
+}
