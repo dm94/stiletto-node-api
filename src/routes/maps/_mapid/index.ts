@@ -1,5 +1,6 @@
 import { MapInfo, MapSchema } from '@customtypes/maps';
 import { EditMapRequest, GetMapRequest } from '@customtypes/requests/maps';
+import { addMapInfo } from '@services/mapinfo';
 import { Type } from '@sinclair/typebox';
 import { FastifyPluginAsync } from 'fastify';
 
@@ -7,6 +8,7 @@ const routes: FastifyPluginAsync = async (server) => {
   server.get<GetMapRequest, { Reply: MapInfo }>(
     '/',
     {
+      onRequest: [(request, reply, done) => addMapInfo(server, request, done)],
       schema: {
         description: 'Returns map information',
         summary: 'getMap',
@@ -38,19 +40,11 @@ const routes: FastifyPluginAsync = async (server) => {
         return reply.code(400).send();
       }
 
-      server.mysql.query(
-        'select mapid, typemap, discordID as discordid, name, dateofburning, pass, allowedit from clanmaps where mapid=? and pass=?',
-        [request.params.mapid, request.query.mappass],
-        (err, result) => {
-          if (result && result[0]) {
-            return reply.code(200).send(result[0] as MapInfo);
-          } else if (err) {
-            return reply.code(503).send();
-          } else {
-            return reply.code(404).send();
-          }
-        },
-      );
+      if (request.mapInfo) {
+        reply.code(200).send(request.mapInfo as MapInfo);
+      } else {
+        return reply.code(404).send();
+      }
     },
   );
   server.put<EditMapRequest>(

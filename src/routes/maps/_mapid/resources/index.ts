@@ -8,7 +8,7 @@ const routes: FastifyPluginAsync = async (server) => {
   server.get<GetMapRequest, { Reply: ResourceInfo[] }>(
     '/',
     {
-      onRequest: [server.authenticate, (request, reply, done) => addMapInfo(server, request, done)],
+      onRequest: [(request, reply, done) => addMapInfo(server, request, done)],
       schema: {
         description: 'Return all resources for that map',
         summary: 'getResources',
@@ -80,7 +80,7 @@ const routes: FastifyPluginAsync = async (server) => {
   server.post<AddResourceRequest>(
     '/',
     {
-      onRequest: [server.authenticate, (request, reply, done) => addMapInfo(server, request, done)],
+      onRequest: [(request, reply, done) => addMapInfo(server, request, done)],
       schema: {
         description: 'To create a new resource in the map',
         summary: 'addResourceMap',
