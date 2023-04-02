@@ -12,5 +12,6 @@ export interface GetWalkersRequest extends RequestGenericInterface {
     ready?: boolean;
     use?: WalkerUse;
     type?: string;
+    description?: string;
   };
 }
