@@ -1,5 +1,5 @@
 import { Permission } from '@customtypes/permissions';
-import { RelationshipInfo, RelationshipSchema } from '@customtypes/relationships';
+import { RelationshipInfo, RelationshipSchema, TypeRelationship } from '@customtypes/relationships';
 import { GetClanRequest } from '@customtypes/requests/clans';
 import { CreateRelationshipRequest } from '@customtypes/requests/relationships';
 import { addPermissions } from '@services/permission';
@@ -89,7 +89,7 @@ const routes: FastifyPluginAsync = async (server) => {
               type: 'integer',
               description:
                 'Type of relationship. 0 PNA, 1 Ally, 2 Enemy, 30 False PNA, 31 False Ally, 32 False War',
-              enum: [0, 1, 2, 30, 31, 32],
+              enum: Object.values(TypeRelationship),
             },
             clanflag: {
               type: 'string',
@@ -141,7 +141,7 @@ const routes: FastifyPluginAsync = async (server) => {
       }
 
       const clanId = Number(request.params.clanid);
-      const typed: number = request.query?.typed;
+      const typed: number | TypeRelationship = request.query?.typed;
       const clanflag: string = request.query?.clanflag ?? '#000000';
       const nameotherclan: string = request.query?.nameotherclan;
       const symbol: string = request.query?.symbol ?? 'C1';
