@@ -121,7 +121,7 @@ const routes: FastifyPluginAsync = async (server) => {
         },
       },
     },
-    async (request, reply) => {
+    (request, reply) => {
       if (request.params?.clanid) {
         if (Number(request.dbuser.clanid) !== Number(request.params.clanid)) {
           reply.code(401);

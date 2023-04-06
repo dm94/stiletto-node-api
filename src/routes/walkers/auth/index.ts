@@ -36,7 +36,7 @@ const routes: FastifyPluginAsync = async (server) => {
         },
       },
     },
-    async (request, reply) => {
+    (request, reply) => {
       if (!request?.dbuser) {
         reply.code(401);
         return new Error('Invalid token JWT');
@@ -89,7 +89,7 @@ const routes: FastifyPluginAsync = async (server) => {
         },
       },
     },
-    async (request, reply) => {
+    (request, reply) => {
       if (!request?.dbuser) {
         reply.code(401);
         return new Error('Invalid token JWT');
