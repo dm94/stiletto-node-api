@@ -64,3 +64,13 @@ export interface UpdateDiscordConfigRequest extends RequestGenericInterface {
     clanid: number;
   };
 }
+
+export interface SeeWhoHasLearntItRequest extends RequestGenericInterface {
+  Querystring: {
+    tech: string;
+    tree: string;
+  };
+  Params: {
+    clanid: number;
+  };
+}

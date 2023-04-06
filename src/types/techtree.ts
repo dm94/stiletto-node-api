@@ -10,3 +10,9 @@ export const TechTreeSchema = Type.Object({
 });
 
 export type TechTreeInfo = Static<typeof TechTreeSchema>;
+
+export const TechUserSchema = Type.Object({
+  discordtag: Type.String(),
+});
+
+export type TechUserInfo = Static<typeof TechUserSchema>;
