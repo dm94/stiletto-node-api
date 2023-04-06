@@ -11,6 +11,7 @@ import { MapSchema } from '@customtypes/maps';
 import { ResourceSchema } from '@customtypes/resource';
 import { WalkerSchema } from '@customtypes/walkers';
 import { RecipeListSchema, RecipeSchema } from '@customtypes/recipes';
+import { TechTreeSchema, TechUserSchema } from '@customtypes/techtree';
 
 export const schema = {
   openapi: {
@@ -66,6 +67,8 @@ export const schema = {
         WalkerSchema,
         RecipeSchema,
         RecipeListSchema,
+        TechTreeSchema,
+        TechUserSchema,
       },
     },
   },
