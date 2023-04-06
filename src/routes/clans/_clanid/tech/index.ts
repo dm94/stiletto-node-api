@@ -1,5 +1,5 @@
 import { FastifyPluginAsync } from 'fastify';
-import { TechUserInfo, TechUserSchema } from '@customtypes/techtree';
+import { TechUserInfo, TechUserSchema, Tree } from '@customtypes/techtree';
 import { SeeWhoHasLearntItRequest } from '@customtypes/requests/clans';
 import { Type } from '@sinclair/typebox';
 
@@ -28,6 +28,7 @@ const routes: FastifyPluginAsync = async (server) => {
             },
             tree: {
               type: 'string',
+              enum: Object.values(Tree),
             },
           },
         },

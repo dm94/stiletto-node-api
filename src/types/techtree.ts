@@ -1,5 +1,13 @@
 import { Static, Type } from '@sinclair/typebox';
 
+export enum Tree {
+  VITAMINS = 'Vitamins',
+  EQUIPMENT = 'Equipment',
+  CONSTRUCTION = 'Construction',
+  CRAFTING = 'Crafting',
+  WALKERS = 'Walkers',
+}
+
 export const TechTreeSchema = Type.Object({
   discordtag: Type.String(),
   Vitamins: Type.Array(Type.String()),

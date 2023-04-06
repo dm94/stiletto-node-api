@@ -1,6 +1,6 @@
 import { FastifyPluginAsync } from 'fastify';
 import { GetTechRequest } from '@customtypes/requests/users';
-import { TechTreeInfo, TechTreeSchema } from '@customtypes/techtree';
+import { TechTreeInfo, TechTreeSchema, Tree } from '@customtypes/techtree';
 
 const routes: FastifyPluginAsync = async (server) => {
   server.get<GetTechRequest, { Reply: TechTreeInfo }>(
@@ -24,6 +24,7 @@ const routes: FastifyPluginAsync = async (server) => {
           properties: {
             tree: {
               type: 'string',
+              enum: Object.values(Tree),
             },
           },
         },
@@ -83,7 +84,16 @@ const routes: FastifyPluginAsync = async (server) => {
           properties: {
             tree: {
               type: 'string',
+              description: 'Tree name',
+              enum: Object.values(Tree),
             },
+          },
+        },
+        body: {
+          type: 'array',
+          items: {
+            type: 'string',
+            description: 'Tech name',
           },
         },
         security: [
