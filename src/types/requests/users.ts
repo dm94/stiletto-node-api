@@ -5,3 +5,12 @@ export interface AddNickRequest extends RequestGenericInterface {
     dataupdate: string;
   };
 }
+
+export interface GetTechRequest extends RequestGenericInterface {
+  Params: {
+    discordid: string;
+  };
+  Querystring: {
+    tree: string;
+  };
+}
