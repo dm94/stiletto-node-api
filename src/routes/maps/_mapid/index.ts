@@ -1,4 +1,9 @@
-import { Error400Default, Error401Default, Error503Default } from '@customtypes/errors';
+import {
+  Error400Default,
+  Error401Default,
+  Error404Default,
+  Error503Default,
+} from '@customtypes/errors';
 import { MapInfo, MapSchema } from '@customtypes/maps';
 import { EditMapRequest, GetMapRequest } from '@customtypes/requests/maps';
 import { addMapInfo } from '@services/mapinfo';
@@ -34,6 +39,7 @@ const routes: FastifyPluginAsync = async (server) => {
         response: {
           200: MapSchema,
           400: Error400Default,
+          404: Error404Default,
           503: Error503Default,
         },
       },
@@ -158,6 +164,7 @@ const routes: FastifyPluginAsync = async (server) => {
           }),
           400: Error400Default,
           401: Error401Default,
+          404: Error404Default,
           503: Error503Default,
         },
       },

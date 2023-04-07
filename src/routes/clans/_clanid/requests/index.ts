@@ -1,4 +1,9 @@
-import { Error400Default, Error401Default, Error503Default } from '@customtypes/errors';
+import {
+  Error400Default,
+  Error401Default,
+  Error404Default,
+  Error503Default,
+} from '@customtypes/errors';
 import { MemberRequest, MemberRequestSchema } from '@customtypes/member-request';
 import { GetClanRequest } from '@customtypes/requests/clans';
 import { RequestClanRequest } from '@customtypes/requests/requests';
@@ -30,6 +35,7 @@ const routes: FastifyPluginAsync = async (server) => {
           200: Type.Array(MemberRequestSchema),
           400: Error400Default,
           401: Error401Default,
+          404: Error404Default,
           503: Error503Default,
         },
       },

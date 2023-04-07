@@ -1,7 +1,7 @@
 import { FastifyPluginAsync } from 'fastify';
 import { AddRecipeRequest, GetRecipeRequest } from '@customtypes/requests/recipes';
 import { RecipeListInfo, RecipeListSchema } from '@customtypes/recipes';
-import { Error400Default, Error503Default } from '@customtypes/errors';
+import { Error400Default, Error404Default, Error503Default } from '@customtypes/errors';
 
 const routes: FastifyPluginAsync = async (server) => {
   server.post<AddRecipeRequest, { Reply: RecipeListInfo }>(
@@ -74,6 +74,7 @@ const routes: FastifyPluginAsync = async (server) => {
         response: {
           200: RecipeListSchema,
           400: Error400Default,
+          404: Error404Default,
           503: Error503Default,
         },
       },

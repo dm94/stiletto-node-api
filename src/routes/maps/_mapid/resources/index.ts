@@ -1,4 +1,9 @@
-import { Error400Default, Error401Default, Error503Default } from '@customtypes/errors';
+import {
+  Error400Default,
+  Error401Default,
+  Error404Default,
+  Error503Default,
+} from '@customtypes/errors';
 import { AddResourceRequest, GetMapRequest } from '@customtypes/requests/maps';
 import { ResourceInfo, ResourceSchema } from '@customtypes/resource';
 import { addMapInfo } from '@services/mapinfo';
@@ -35,6 +40,7 @@ const routes: FastifyPluginAsync = async (server) => {
           200: Type.Array(ResourceSchema),
           400: Error400Default,
           401: Error401Default,
+          404: Error404Default,
           503: Error503Default,
         },
       },

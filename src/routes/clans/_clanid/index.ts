@@ -1,5 +1,10 @@
 import { ClanInfo, ClanSchema } from '@customtypes/clans';
-import { Error400Default, Error401Default, Error503Default } from '@customtypes/errors';
+import {
+  Error400Default,
+  Error401Default,
+  Error404Default,
+  Error503Default,
+} from '@customtypes/errors';
 import { DeleteClanRequest, GetClanRequest, UpdateClanRequest } from '@customtypes/requests/clans';
 import { Type } from '@sinclair/typebox';
 import { FastifyPluginAsync } from 'fastify';
@@ -22,6 +27,7 @@ const routes: FastifyPluginAsync = async (server) => {
         response: {
           200: ClanSchema,
           400: Error400Default,
+          404: Error404Default,
           503: Error503Default,
         },
       },

@@ -1,4 +1,9 @@
-import { Error400Default, Error401Default, Error503Default } from '@customtypes/errors';
+import {
+  Error400Default,
+  Error401Default,
+  Error404Default,
+  Error503Default,
+} from '@customtypes/errors';
 import { Permission, Permissions, PermissionsSchema } from '@customtypes/permissions';
 import { RelationshipInfo, RelationshipSchema } from '@customtypes/relationships';
 import {
@@ -49,6 +54,7 @@ const routes: FastifyPluginAsync = async (server) => {
           }),
           400: Error400Default,
           401: Error401Default,
+          404: Error404Default,
           503: Error503Default,
         },
       },
@@ -133,6 +139,7 @@ const routes: FastifyPluginAsync = async (server) => {
           }),
           400: Error400Default,
           401: Error401Default,
+          404: Error404Default,
           503: Error503Default,
         },
       },

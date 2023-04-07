@@ -1,4 +1,9 @@
-import { Error400Default, Error401Default, Error503Default } from '@customtypes/errors';
+import {
+  Error400Default,
+  Error401Default,
+  Error404Default,
+  Error503Default,
+} from '@customtypes/errors';
 import { Permission } from '@customtypes/permissions';
 import { RelationshipInfo, RelationshipSchema, TypeRelationship } from '@customtypes/relationships';
 import { GetClanRequest } from '@customtypes/requests/clans';
@@ -32,6 +37,7 @@ const routes: FastifyPluginAsync = async (server) => {
           200: Type.Array(RelationshipSchema),
           400: Error400Default,
           401: Error401Default,
+          404: Error404Default,
           503: Error503Default,
         },
       },
