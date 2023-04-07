@@ -1,6 +1,7 @@
 import { FastifyPluginAsync } from 'fastify';
 import { LoginInfo, LoginSchema } from '@customtypes/user';
 import { getLoginInfo } from '@services/auth';
+import { Error503Default } from '@customtypes/errors';
 
 const routes: FastifyPluginAsync = async (server) => {
   server.post<{ Reply: LoginInfo }>(
@@ -23,6 +24,7 @@ const routes: FastifyPluginAsync = async (server) => {
         },
         response: {
           200: LoginSchema,
+          503: Error503Default,
         },
       },
     },

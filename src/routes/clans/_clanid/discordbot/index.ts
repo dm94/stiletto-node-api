@@ -4,6 +4,7 @@ import { Permission } from '@customtypes/permissions';
 import { Type } from '@sinclair/typebox';
 import { FastifyPluginAsync } from 'fastify';
 import { addPermissions } from '@services/permission';
+import { Error503Default } from '@customtypes/errors';
 
 const routes: FastifyPluginAsync = async (server) => {
   server.get<GetDiscordConfigRequest, { Reply: DiscordConfig }>(
@@ -28,6 +29,7 @@ const routes: FastifyPluginAsync = async (server) => {
         ],
         response: {
           200: DiscordConfigSchema,
+          503: Error503Default,
         },
       },
     },
@@ -119,6 +121,7 @@ const routes: FastifyPluginAsync = async (server) => {
           200: Type.Object({
             message: Type.String(),
           }),
+          503: Error503Default,
         },
       },
     },

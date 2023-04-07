@@ -1,3 +1,4 @@
+import { Error503Default } from '@customtypes/errors';
 import {
   AddWalkerRequest,
   BotEditWalkerRequest,
@@ -71,6 +72,7 @@ const routes: FastifyPluginAsync = async (server) => {
         ],
         response: {
           200: Type.Array(WalkerSchema),
+          503: Error503Default,
         },
       },
     },
@@ -194,6 +196,7 @@ const routes: FastifyPluginAsync = async (server) => {
           201: Type.Object({
             message: Type.String(),
           }),
+          503: Error503Default,
         },
       },
     },
@@ -330,6 +333,7 @@ const routes: FastifyPluginAsync = async (server) => {
           200: Type.Object({
             message: Type.String(),
           }),
+          503: Error503Default,
         },
       },
     },

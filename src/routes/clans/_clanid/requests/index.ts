@@ -1,3 +1,4 @@
+import { Error503Default } from '@customtypes/errors';
 import { MemberRequest, MemberRequestSchema } from '@customtypes/member-request';
 import { GetClanRequest } from '@customtypes/requests/clans';
 import { RequestClanRequest } from '@customtypes/requests/requests';
@@ -27,6 +28,7 @@ const routes: FastifyPluginAsync = async (server) => {
         ],
         response: {
           200: Type.Array(MemberRequestSchema),
+          503: Error503Default,
         },
       },
     },
@@ -94,6 +96,7 @@ const routes: FastifyPluginAsync = async (server) => {
           201: Type.Object({
             message: Type.String(),
           }),
+          503: Error503Default,
         },
       },
     },

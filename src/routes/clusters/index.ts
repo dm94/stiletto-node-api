@@ -1,4 +1,5 @@
 import { ClusterInfo, ClusterSchema } from '@customtypes/clusters';
+import { Error503Default } from '@customtypes/errors';
 import { Type } from '@sinclair/typebox';
 import { FastifyPluginAsync } from 'fastify';
 
@@ -13,6 +14,7 @@ const routes: FastifyPluginAsync = async (server) => {
         tags: ['clusters'],
         response: {
           200: Type.Array(ClusterSchema),
+          503: Error503Default,
         },
       },
     },

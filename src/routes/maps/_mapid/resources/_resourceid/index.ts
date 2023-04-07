@@ -1,3 +1,4 @@
+import { Error503Default } from '@customtypes/errors';
 import { DeleteResourceRequest, EditResourceRequest } from '@customtypes/requests/maps';
 import { Type } from '@sinclair/typebox';
 import { FastifyPluginAsync } from 'fastify';
@@ -40,6 +41,7 @@ const routes: FastifyPluginAsync = async (server) => {
           202: Type.Object({
             message: Type.String(),
           }),
+          503: Error503Default,
         },
       },
     },
@@ -111,6 +113,7 @@ const routes: FastifyPluginAsync = async (server) => {
           204: Type.Object({
             message: Type.String(),
           }),
+          503: Error503Default,
         },
       },
     },

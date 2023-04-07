@@ -1,3 +1,4 @@
+import { Error503Default } from '@customtypes/errors';
 import { MemberActions } from '@customtypes/members';
 import { Permission } from '@customtypes/permissions';
 import { GetMemberRequest } from '@customtypes/requests/members';
@@ -45,6 +46,7 @@ const routes: FastifyPluginAsync = async (server) => {
           202: Type.Object({
             message: Type.String(),
           }),
+          503: Error503Default,
         },
       },
     },

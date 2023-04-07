@@ -6,6 +6,7 @@ import {
   CreateTradeRequest,
   GetTradesRequest,
 } from '@customtypes/requests/trades';
+import { Error503Default } from '@customtypes/errors';
 
 const routes: FastifyPluginAsync = async (server) => {
   server.get<GetTradesRequest, { Reply: TradeInfo }>(
@@ -48,6 +49,7 @@ const routes: FastifyPluginAsync = async (server) => {
         },
         response: {
           200: Type.Array(TradeSchema),
+          503: Error503Default,
         },
       },
     },
@@ -155,6 +157,7 @@ const routes: FastifyPluginAsync = async (server) => {
           201: Type.Object({
             message: Type.String(),
           }),
+          503: Error503Default,
         },
       },
     },
@@ -246,6 +249,7 @@ const routes: FastifyPluginAsync = async (server) => {
           204: Type.Object({
             message: Type.String(),
           }),
+          503: Error503Default,
         },
       },
     },

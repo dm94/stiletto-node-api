@@ -1,3 +1,4 @@
+import { Error503Default } from '@customtypes/errors';
 import { MemberInfo, MemberSchema } from '@customtypes/members';
 import { GetClanRequest } from '@customtypes/requests/clans';
 import { Type } from '@sinclair/typebox';
@@ -26,6 +27,7 @@ const routes: FastifyPluginAsync = async (server) => {
         ],
         response: {
           200: Type.Array(MemberSchema),
+          503: Error503Default,
         },
       },
     },

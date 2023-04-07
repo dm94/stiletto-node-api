@@ -1,4 +1,5 @@
 import { ClanInfo, ClanSchema } from '@customtypes/clans';
+import { Error503Default } from '@customtypes/errors';
 import { DeleteClanRequest, GetClanRequest, UpdateClanRequest } from '@customtypes/requests/clans';
 import { Type } from '@sinclair/typebox';
 import { FastifyPluginAsync } from 'fastify';
@@ -20,6 +21,7 @@ const routes: FastifyPluginAsync = async (server) => {
         },
         response: {
           200: ClanSchema,
+          503: Error503Default,
         },
       },
     },
@@ -91,6 +93,7 @@ const routes: FastifyPluginAsync = async (server) => {
           201: Type.Object({
             message: Type.String(),
           }),
+          503: Error503Default,
         },
       },
     },
@@ -183,6 +186,7 @@ const routes: FastifyPluginAsync = async (server) => {
           204: Type.Object({
             message: Type.String(),
           }),
+          503: Error503Default,
         },
       },
     },

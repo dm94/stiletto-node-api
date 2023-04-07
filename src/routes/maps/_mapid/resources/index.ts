@@ -1,3 +1,4 @@
+import { Error503Default } from '@customtypes/errors';
 import { AddResourceRequest, GetMapRequest } from '@customtypes/requests/maps';
 import { ResourceInfo, ResourceSchema } from '@customtypes/resource';
 import { addMapInfo } from '@services/mapinfo';
@@ -32,6 +33,7 @@ const routes: FastifyPluginAsync = async (server) => {
         },
         response: {
           200: Type.Array(ResourceSchema),
+          503: Error503Default,
         },
       },
     },
@@ -130,6 +132,7 @@ const routes: FastifyPluginAsync = async (server) => {
           201: Type.Object({
             message: Type.String(),
           }),
+          503: Error503Default,
         },
       },
     },

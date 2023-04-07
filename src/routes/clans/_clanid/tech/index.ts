@@ -2,6 +2,7 @@ import { FastifyPluginAsync } from 'fastify';
 import { TechUserInfo, TechUserSchema, Tree } from '@customtypes/techtree';
 import { SeeWhoHasLearntItRequest } from '@customtypes/requests/clans';
 import { Type } from '@sinclair/typebox';
+import { Error503Default } from '@customtypes/errors';
 
 const routes: FastifyPluginAsync = async (server) => {
   server.get<SeeWhoHasLearntItRequest, { Reply: TechUserInfo[] }>(
@@ -39,6 +40,7 @@ const routes: FastifyPluginAsync = async (server) => {
         ],
         response: {
           200: Type.Array(TechUserSchema),
+          503: Error503Default,
         },
       },
     },

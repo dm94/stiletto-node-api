@@ -1,4 +1,5 @@
 import { DiscordConfigBot, DiscordConfigBotSchema, Languages } from '@customtypes/discordconfig';
+import { Error503Default } from '@customtypes/errors';
 import { GetDiscordServerRequest, UpdateBotConfigByServerRequest } from '@customtypes/requests/bot';
 import { Type } from '@sinclair/typebox';
 import { FastifyPluginAsync } from 'fastify';
@@ -20,6 +21,7 @@ const routes: FastifyPluginAsync = async (server) => {
         ],
         response: {
           200: Type.Array(DiscordConfigBotSchema),
+          503: Error503Default,
         },
       },
     },
@@ -59,6 +61,7 @@ const routes: FastifyPluginAsync = async (server) => {
         ],
         response: {
           200: DiscordConfigBotSchema,
+          503: Error503Default,
         },
       },
     },
@@ -132,6 +135,7 @@ const routes: FastifyPluginAsync = async (server) => {
           200: Type.Object({
             message: Type.String(),
           }),
+          503: Error503Default,
         },
       },
     },
