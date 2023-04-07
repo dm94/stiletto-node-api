@@ -1,0 +1,18 @@
+name: Deploy documentation
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy-doc:
+    name: Deploy API doc on Bump
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Deploy API documentation
+        uses: bump-sh/github-action@0.2
+        with:
+          doc: 423a3617-07fb-4fdc-8df3-716c50608d6e
+          token: ${{secrets.BUMP_TOKEN}}
+          file: stiletto.json
