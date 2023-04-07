@@ -73,3 +73,13 @@ export interface KickFromClanRequest extends RequestGenericInterface {
     discordid: string;
   };
 }
+
+export interface GetWhoHasLearnRequest extends RequestGenericInterface {
+  Querystring: {
+    tree: string;
+    tech: string;
+  };
+  Params: {
+    discordid: string;
+  };
+}
