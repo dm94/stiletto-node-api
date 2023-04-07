@@ -1,7 +1,7 @@
 import { FastifyPluginAsync } from 'fastify';
 import { GetTechRequest } from '@customtypes/requests/users';
 import { TechTreeInfo, TechTreeSchema, Tree } from '@customtypes/techtree';
-import { Error401Default, Error503Default } from '@customtypes/errors';
+import { Error400Default, Error401Default, Error503Default } from '@customtypes/errors';
 
 const routes: FastifyPluginAsync = async (server) => {
   server.get<GetTechRequest, { Reply: TechTreeInfo }>(
@@ -36,6 +36,7 @@ const routes: FastifyPluginAsync = async (server) => {
         ],
         response: {
           200: TechTreeSchema,
+          400: Error400Default,
           401: Error401Default,
           503: Error503Default,
         },
@@ -106,6 +107,7 @@ const routes: FastifyPluginAsync = async (server) => {
         ],
         response: {
           200: TechTreeSchema,
+          400: Error400Default,
           401: Error401Default,
           503: Error503Default,
         },

@@ -1,4 +1,4 @@
-import { Error503Default } from '@customtypes/errors';
+import { Error400Default, Error401Default, Error503Default } from '@customtypes/errors';
 import {
   AddWalkerRequest,
   BotEditWalkerRequest,
@@ -72,6 +72,8 @@ const routes: FastifyPluginAsync = async (server) => {
         ],
         response: {
           200: Type.Array(WalkerSchema),
+          400: Error400Default,
+          401: Error401Default,
           503: Error503Default,
         },
       },
@@ -196,6 +198,8 @@ const routes: FastifyPluginAsync = async (server) => {
           201: Type.Object({
             message: Type.String(),
           }),
+          400: Error400Default,
+          401: Error401Default,
           503: Error503Default,
         },
       },
@@ -333,6 +337,8 @@ const routes: FastifyPluginAsync = async (server) => {
           200: Type.Object({
             message: Type.String(),
           }),
+          400: Error400Default,
+          401: Error401Default,
           503: Error503Default,
         },
       },

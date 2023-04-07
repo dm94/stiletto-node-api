@@ -1,4 +1,4 @@
-import { Error503Default } from '@customtypes/errors';
+import { Error400Default, Error401Default, Error503Default } from '@customtypes/errors';
 import { Permission, Permissions, PermissionsSchema } from '@customtypes/permissions';
 import { RelationshipInfo, RelationshipSchema } from '@customtypes/relationships';
 import {
@@ -47,6 +47,8 @@ const routes: FastifyPluginAsync = async (server) => {
             ClanID: Type.Integer(),
             'Server Discord ID': Type.String(),
           }),
+          400: Error400Default,
+          401: Error401Default,
           503: Error503Default,
         },
       },
@@ -129,6 +131,8 @@ const routes: FastifyPluginAsync = async (server) => {
           204: Type.Object({
             message: Type.String(),
           }),
+          400: Error400Default,
+          401: Error401Default,
           503: Error503Default,
         },
       },
@@ -190,6 +194,8 @@ const routes: FastifyPluginAsync = async (server) => {
         ],
         response: {
           200: Type.Array(PermissionsSchema),
+          400: Error400Default,
+          401: Error401Default,
           503: Error503Default,
         },
       },
@@ -235,6 +241,8 @@ const routes: FastifyPluginAsync = async (server) => {
         ],
         response: {
           200: Type.Array(RelationshipSchema),
+          400: Error400Default,
+          401: Error401Default,
           503: Error503Default,
         },
       },

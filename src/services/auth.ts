@@ -45,13 +45,6 @@ export const getLoginInfo = async (server, request, reply) => {
         server.mysql.query(
           'INSERT INTO users(discordID, discordTag,token,createdAt) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE token=?, lastUpdate=?',
           [discordId, username, token, date, token, date],
-          (err, result) => {
-            return reply.code(202).send({
-              discordid: discordId,
-              discordTag: username,
-              token: token,
-            });
-          },
         );
 
         return reply.code(202).send({

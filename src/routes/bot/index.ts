@@ -1,4 +1,4 @@
-import { Error503Default } from '@customtypes/errors';
+import { Error400Default, Error401Default, Error503Default } from '@customtypes/errors';
 import { GetWhoHasLearnRequest } from '@customtypes/requests/bot';
 import {
   TechTreeInfo,
@@ -48,6 +48,8 @@ const routes: FastifyPluginAsync = async (server) => {
         ],
         response: {
           200: Type.Array(TechUserSchema),
+          400: Error400Default,
+          401: Error401Default,
           503: Error503Default,
         },
       },
@@ -133,6 +135,8 @@ const routes: FastifyPluginAsync = async (server) => {
         ],
         response: {
           200: TechTreeSchema,
+          400: Error400Default,
+          401: Error401Default,
           503: Error503Default,
         },
       },

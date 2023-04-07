@@ -1,4 +1,4 @@
-import { Error401Default, Error503Default } from '@customtypes/errors';
+import { Error400Default, Error401Default, Error503Default } from '@customtypes/errors';
 import { RequestActions } from '@customtypes/member-request';
 import { Permission } from '@customtypes/permissions';
 import { UpdateClanRequest } from '@customtypes/requests/requests';
@@ -45,6 +45,7 @@ const routes: FastifyPluginAsync = async (server) => {
           202: Type.Object({
             message: Type.String(),
           }),
+          400: Error400Default,
           401: Error401Default,
           503: Error503Default,
         },

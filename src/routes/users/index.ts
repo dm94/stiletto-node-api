@@ -3,7 +3,7 @@ import { UserInfo, UserSchema } from '@customtypes/user';
 import { Type } from '@sinclair/typebox';
 import { sendDiscordMessage } from '@services/DiscordWebhook';
 import { AddNickRequest } from '@customtypes/requests/users';
-import { Error401Default, Error503Default } from '@customtypes/errors';
+import { Error400Default, Error401Default, Error503Default } from '@customtypes/errors';
 
 const routes: FastifyPluginAsync = async (server) => {
   server.get<{ Reply: UserInfo }>(
@@ -59,6 +59,7 @@ const routes: FastifyPluginAsync = async (server) => {
           202: Type.Object({
             message: Type.String(),
           }),
+          400: Error400Default,
           401: Error401Default,
           503: Error503Default,
         },
@@ -92,7 +93,7 @@ const routes: FastifyPluginAsync = async (server) => {
           },
         );
       } else {
-        return reply.code(400);
+        return reply.code(400).send();
       }
     },
   );
