@@ -1,12 +1,16 @@
-import { Permission } from '@customtypes/permissions';
-import { KickFromClanRequest, LinkClanRequest } from '@customtypes/requests/bot';
+import { Permission, Permissions, PermissionsSchema } from '@customtypes/permissions';
+import {
+  GetDiscordServerRequest,
+  KickFromClanRequest,
+  LinkClanRequest,
+} from '@customtypes/requests/bot';
 import { hasPermissions } from '@services/permission';
 import { Type } from '@sinclair/typebox';
 import { FastifyPluginAsync } from 'fastify';
 
 const routes: FastifyPluginAsync = async (server) => {
   server.post<LinkClanRequest>(
-    '/:discordid',
+    '/',
     {
       onRequest: [server.botAuth],
       schema: {
@@ -90,7 +94,7 @@ const routes: FastifyPluginAsync = async (server) => {
     },
   );
   server.delete<KickFromClanRequest>(
-    '/:discordid',
+    '/',
     {
       onRequest: [server.botAuth],
       schema: {
@@ -155,6 +159,50 @@ const routes: FastifyPluginAsync = async (server) => {
             return reply.code(503).send();
           } else {
             return reply.code(404).send();
+          }
+        },
+      );
+    },
+  );
+  server.get<GetDiscordServerRequest, { Reply: Permissions }>(
+    '/members',
+    {
+      onRequest: [server.botAuth],
+      schema: {
+        description: 'Return clan members permisions',
+        summary: 'getMembersPermisionsBot',
+        operationId: 'getMembersPermisionsBot',
+        tags: ['bot', 'clan'],
+        params: {
+          type: 'object',
+          properties: {
+            discordid: { type: 'string' },
+          },
+        },
+        security: [
+          {
+            apiKey: [],
+          },
+        ],
+        response: {
+          200: Type.Array(PermissionsSchema),
+        },
+      },
+    },
+    (request, reply) => {
+      if (!request?.params?.discordid) {
+        return reply.code(400).send();
+      }
+
+      server.mysql.query(
+        'SELECT clanpermissions.clanid, clanpermissions.discordID as discordid, clanpermissions.request, clanpermissions.kickmembers, clanpermissions.walkers, clanpermissions.bot, clanpermissions.diplomacy FROM clanpermissions, clans WHERE clanpermissions.clanid=clans.clanid and clans.discordid=?',
+        [request.params.discordid],
+        (e, result) => {
+          if (result) {
+            return reply.code(200).send(result);
+          }
+          if (e) {
+            return reply.code(503).send();
           }
         },
       );
