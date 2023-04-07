@@ -26,6 +26,7 @@ const ConfigSchema = Type.Strict(
     API_HOST: Type.String(),
     API_PORT: Type.String(),
     JWT_SECRET: Type.String(),
+    API_KEY: Type.String(),
     MYSQL_CONNECTION: Type.Optional(Type.String()),
     MONGODB_CONNECTION: Type.Optional(Type.String()),
     DISCORD_CLIENT_ID: Type.String(),

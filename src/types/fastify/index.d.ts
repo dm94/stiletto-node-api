@@ -18,6 +18,7 @@ declare module 'fastify' {
     Logger = FastifyLoggerInstance,
   > {
     authenticate(): void;
+    botAuth(): void;
   }
 }
 
