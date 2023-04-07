@@ -1,5 +1,5 @@
 import { Permission } from '@customtypes/permissions';
-import { LinkClanRequest } from '@customtypes/requests/bot';
+import { KickFromClanRequest, LinkClanRequest } from '@customtypes/requests/bot';
 import { hasPermissions } from '@services/permission';
 import { Type } from '@sinclair/typebox';
 import { FastifyPluginAsync } from 'fastify';
@@ -77,6 +77,77 @@ const routes: FastifyPluginAsync = async (server) => {
                   }
                 },
               );
+            } else {
+              return reply.code(401).send();
+            }
+          } else if (e) {
+            return reply.code(503).send();
+          } else {
+            return reply.code(404).send();
+          }
+        },
+      );
+    },
+  );
+  server.delete<KickFromClanRequest>(
+    '/:discordid',
+    {
+      onRequest: [server.botAuth],
+      schema: {
+        description: 'Kick a clan member',
+        summary: 'kickFromClan',
+        operationId: 'kickFromClan',
+        tags: ['bot', 'clan'],
+        params: {
+          type: 'object',
+          properties: {
+            discordid: { type: 'string' },
+          },
+        },
+        querystring: {
+          type: 'object',
+          required: ['nick'],
+          properties: {
+            nick: {
+              type: 'string',
+            },
+          },
+        },
+        security: [
+          {
+            apiKey: [],
+          },
+        ],
+        response: {
+          204: Type.Object({
+            message: Type.String(),
+          }),
+        },
+      },
+    },
+    (request, reply) => {
+      if (!request?.params?.discordid || !request.query?.nick) {
+        return reply.code(400).send();
+      }
+
+      const serverDiscordId: string = request.params.discordid;
+      const nick: string = request.query?.nick;
+
+      server.mysql.query(
+        'select users.discordID, users.clanid from users, clans where users.clanid=clans.clanid and users.nickname=? and clans.discordid=?',
+        [nick, serverDiscordId],
+        (e, r) => {
+          if (r && r[0]) {
+            const clanId = r[0].clanid;
+            const discordId = r[0].discordID;
+
+            if (clanId && discordId) {
+              server.mysql.query('delete from clanpermissions where discordID=? and clanid=?', [
+                discordId,
+                clanId,
+              ]);
+              server.mysql.query('update users set clanid=null where discordID=?', [discordId]);
+              return reply.code(204).send();
             } else {
               return reply.code(401).send();
             }

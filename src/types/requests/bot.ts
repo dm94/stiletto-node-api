@@ -64,3 +64,12 @@ export interface LinkClanRequest extends RequestGenericInterface {
     discordid: string;
   };
 }
+
+export interface KickFromClanRequest extends RequestGenericInterface {
+  Querystring: {
+    nick: string;
+  };
+  Params: {
+    discordid: string;
+  };
+}
