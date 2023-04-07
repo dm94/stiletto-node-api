@@ -18,3 +18,13 @@ export const DiscordConfigSchema = Type.Object({
 });
 
 export type DiscordConfig = Static<typeof DiscordConfigSchema>;
+
+export const DiscordConfigBotSchema = Type.Object({
+  serverdiscordid: Type.String(),
+  botlanguaje: Type.Enum(Languages),
+  readclanlog: Type.Boolean(),
+  automatickick: Type.Boolean(),
+  setnotreadypvp: Type.Boolean(),
+  walkeralarm: Type.Boolean(),
+});
+export type DiscordConfigBot = Static<typeof DiscordConfigBotSchema>;
