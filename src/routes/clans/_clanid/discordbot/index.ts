@@ -94,6 +94,7 @@ const routes: FastifyPluginAsync = async (server) => {
               type: 'string',
               maxLength: 2,
               default: 'en',
+              enum: Object.values(Languages),
             },
             clanlog: {
               type: 'boolean',

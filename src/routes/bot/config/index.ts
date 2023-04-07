@@ -1,5 +1,5 @@
-import { DiscordConfigBot, DiscordConfigBotSchema } from '@customtypes/discordconfig';
-import { GetDiscordServerRequest } from '@customtypes/requests/bot';
+import { DiscordConfigBot, DiscordConfigBotSchema, Languages } from '@customtypes/discordconfig';
+import { GetDiscordServerRequest, UpdateBotConfigByServerRequest } from '@customtypes/requests/bot';
 import { Type } from '@sinclair/typebox';
 import { FastifyPluginAsync } from 'fastify';
 
@@ -79,6 +79,98 @@ const routes: FastifyPluginAsync = async (server) => {
             return reply.code(503).send();
           } else {
             return reply.code(404).send();
+          }
+        },
+      );
+    },
+  );
+  server.put<UpdateBotConfigByServerRequest>(
+    '/:discordid',
+    {
+      onRequest: [server.botAuth],
+      schema: {
+        description: 'Update Bot Config By Server',
+        summary: 'updateBotConfigByServer',
+        operationId: 'updateBotConfigByServer',
+        tags: ['bot'],
+        params: {
+          type: 'object',
+          properties: {
+            discordid: { type: 'string' },
+          },
+        },
+        querystring: {
+          type: 'object',
+          required: [],
+          properties: {
+            languaje: {
+              type: 'string',
+              maxLength: 2,
+              default: 'en',
+              enum: Object.values(Languages),
+            },
+            clanlog: {
+              type: 'boolean',
+            },
+            kick: {
+              type: 'boolean',
+            },
+            readypvp: {
+              type: 'boolean',
+            },
+            walkeralarm: {
+              type: 'boolean',
+            },
+          },
+        },
+        security: [
+          {
+            apiKey: [],
+          },
+        ],
+        response: {
+          200: Type.Object({
+            message: Type.String(),
+          }),
+        },
+      },
+    },
+    (request, reply) => {
+      if (!request?.params?.discordid) {
+        return reply.code(400).send();
+      }
+
+      const serverDiscordId: string = request.params.discordid;
+
+      const languaje: Languages = request.query?.languaje ?? Languages.EN;
+      const clanLog: boolean = request.query?.clanlog ?? true;
+      const kick: boolean = request.query?.kick ?? true;
+      const readyPvp: boolean = request.query?.readypvp ?? true;
+      const walkerAlarm: boolean = request.query?.walkeralarm ?? true;
+
+      server.mysql.query(
+        'insert into botconfigs(serverdiscordid,botlanguaje,readclanlog,automatickick,setnotreadypvp,walkeralarm) values(?,?,?,?,?,?) ON DUPLICATE KEY UPDATE botlanguaje=?, readclanlog=?, automatickick=?, setnotreadypvp=?, walkeralarm=?',
+        [
+          serverDiscordId,
+          languaje,
+          clanLog,
+          kick,
+          readyPvp,
+          walkerAlarm,
+          languaje,
+          clanLog,
+          kick,
+          readyPvp,
+          walkerAlarm,
+        ],
+        (err, result) => {
+          if (result) {
+            return reply.code(200).send({
+              message: 'Config updated',
+            });
+          }
+          if (err) {
+            return reply.code(503).send();
           }
         },
       );
