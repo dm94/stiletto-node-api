@@ -1,4 +1,5 @@
 import { Languages } from '@customtypes/discordconfig';
+import { TradeType } from '@customtypes/trades';
 import { WalkerType, WalkerUse } from '@customtypes/walkers';
 import { RequestGenericInterface } from 'fastify/types/request';
 
@@ -81,5 +82,17 @@ export interface GetWhoHasLearnRequest extends RequestGenericInterface {
   };
   Params: {
     discordid: string;
+  };
+}
+
+export interface CreateTradefromBotRequest extends RequestGenericInterface {
+  Querystring: {
+    discordid: string;
+    type: TradeType;
+    resource: string;
+    amount: number;
+    quality: number;
+    region: string;
+    price: number;
   };
 }

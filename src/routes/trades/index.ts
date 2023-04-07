@@ -163,7 +163,7 @@ const routes: FastifyPluginAsync = async (server) => {
       },
     },
     (request, reply) => {
-      let type: string = request.query?.type ?? 'Supply';
+      let type: string = request.query?.type ?? TradeType.Supply;
       const resource: string = request.query?.resource ?? 'Aloe';
       let amount: number =
         request.query?.amount && request.query.amount > 0 ? request.query.amount : 1;

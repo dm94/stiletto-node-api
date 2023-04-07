@@ -143,9 +143,9 @@ const routes: FastifyPluginAsync = async (server) => {
     {
       onRequest: [server.authenticate],
       schema: {
-        description: 'Edit map data',
-        summary: 'editMap',
-        operationId: 'editMap',
+        description: 'Delete a map, only the owner of the map can do this.',
+        summary: 'deleteMap',
+        operationId: 'deleteMap',
         tags: ['maps'],
         params: {
           type: 'object',
