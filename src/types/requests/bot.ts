@@ -55,3 +55,12 @@ export interface BotEditWalkerRequest extends RequestGenericInterface {
     discordid: string;
   };
 }
+
+export interface LinkClanRequest extends RequestGenericInterface {
+  Querystring: {
+    memberid: string;
+  };
+  Params: {
+    discordid: string;
+  };
+}
