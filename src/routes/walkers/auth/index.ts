@@ -1,7 +1,7 @@
 import { FastifyPluginAsync } from 'fastify';
 import { Type } from '@sinclair/typebox';
 import { GetDiscordServersRequest } from '@customtypes/requests/walkers';
-import { Error503Default } from '@customtypes/errors';
+import { Error401Default, Error503Default } from '@customtypes/errors';
 
 const routes: FastifyPluginAsync = async (server) => {
   server.get<GetDiscordServersRequest>(
@@ -34,6 +34,7 @@ const routes: FastifyPluginAsync = async (server) => {
           202: Type.Object({
             message: Type.String(),
           }),
+          401: Error401Default,
           503: Error503Default,
         },
       },
@@ -88,6 +89,7 @@ const routes: FastifyPluginAsync = async (server) => {
           202: Type.Object({
             message: Type.String(),
           }),
+          401: Error401Default,
           503: Error503Default,
         },
       },

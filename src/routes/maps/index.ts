@@ -1,4 +1,4 @@
-import { Error503Default } from '@customtypes/errors';
+import { Error401Default, Error503Default } from '@customtypes/errors';
 import { MapInfo, MapSchema } from '@customtypes/maps';
 import { AddMapRequest } from '@customtypes/requests/maps';
 import { Type } from '@sinclair/typebox';
@@ -21,6 +21,7 @@ const routes: FastifyPluginAsync = async (server) => {
         ],
         response: {
           200: Type.Array(MapSchema),
+          401: Error401Default,
           503: Error503Default,
         },
       },

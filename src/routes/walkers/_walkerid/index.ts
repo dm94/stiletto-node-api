@@ -4,7 +4,7 @@ import { WalkerUse } from '@customtypes/walkers';
 import { DeleteWalkersRequest, EditWalkersRequest } from '@customtypes/requests/walkers';
 import { Permission } from '@customtypes/permissions';
 import { addPermissions } from '@services/permission';
-import { Error503Default } from '@customtypes/errors';
+import { Error401Default, Error503Default } from '@customtypes/errors';
 
 const routes: FastifyPluginAsync = async (server) => {
   server.put<EditWalkersRequest>(
@@ -58,6 +58,7 @@ const routes: FastifyPluginAsync = async (server) => {
           202: Type.Object({
             message: Type.String(),
           }),
+          401: Error401Default,
           503: Error503Default,
         },
       },
@@ -164,6 +165,7 @@ const routes: FastifyPluginAsync = async (server) => {
           204: Type.Object({
             message: Type.String(),
           }),
+          401: Error401Default,
           503: Error503Default,
         },
       },

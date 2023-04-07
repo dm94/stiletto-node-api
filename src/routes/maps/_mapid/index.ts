@@ -1,4 +1,4 @@
-import { Error503Default } from '@customtypes/errors';
+import { Error401Default, Error503Default } from '@customtypes/errors';
 import { MapInfo, MapSchema } from '@customtypes/maps';
 import { EditMapRequest, GetMapRequest } from '@customtypes/requests/maps';
 import { addMapInfo } from '@services/mapinfo';
@@ -95,6 +95,7 @@ const routes: FastifyPluginAsync = async (server) => {
           202: Type.Object({
             message: Type.String(),
           }),
+          401: Error401Default,
           503: Error503Default,
         },
       },
@@ -153,6 +154,7 @@ const routes: FastifyPluginAsync = async (server) => {
           204: Type.Object({
             message: Type.String(),
           }),
+          401: Error401Default,
           503: Error503Default,
         },
       },

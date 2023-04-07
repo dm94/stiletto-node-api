@@ -2,7 +2,7 @@ import { FastifyPluginAsync } from 'fastify';
 import { Type } from '@sinclair/typebox';
 import { WalkerInfo, WalkerSchema, WalkerType, WalkerUse } from '@customtypes/walkers';
 import { GetWalkersRequest } from '@customtypes/requests/walkers';
-import { Error503Default } from '@customtypes/errors';
+import { Error401Default, Error503Default } from '@customtypes/errors';
 
 const routes: FastifyPluginAsync = async (server) => {
   server.get<GetWalkersRequest, { Reply: WalkerInfo[] }>(
@@ -65,6 +65,7 @@ const routes: FastifyPluginAsync = async (server) => {
         ],
         response: {
           200: Type.Array(WalkerSchema),
+          401: Error401Default,
           503: Error503Default,
         },
       },

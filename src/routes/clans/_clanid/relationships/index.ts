@@ -1,4 +1,4 @@
-import { Error503Default } from '@customtypes/errors';
+import { Error401Default, Error503Default } from '@customtypes/errors';
 import { Permission } from '@customtypes/permissions';
 import { RelationshipInfo, RelationshipSchema, TypeRelationship } from '@customtypes/relationships';
 import { GetClanRequest } from '@customtypes/requests/clans';
@@ -30,6 +30,7 @@ const routes: FastifyPluginAsync = async (server) => {
         ],
         response: {
           200: Type.Array(RelationshipSchema),
+          401: Error401Default,
           503: Error503Default,
         },
       },
@@ -116,6 +117,7 @@ const routes: FastifyPluginAsync = async (server) => {
           201: Type.Object({
             message: Type.String(),
           }),
+          401: Error401Default,
           503: Error503Default,
         },
       },
