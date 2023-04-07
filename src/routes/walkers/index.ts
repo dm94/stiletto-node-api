@@ -1,6 +1,6 @@
 import { FastifyPluginAsync } from 'fastify';
 import { Type } from '@sinclair/typebox';
-import { WalkerInfo, WalkerSchema, WalkerUse } from '@customtypes/walkers';
+import { WalkerInfo, WalkerSchema, WalkerType, WalkerUse } from '@customtypes/walkers';
 import { GetWalkersRequest } from '@customtypes/requests/walkers';
 
 const routes: FastifyPluginAsync = async (server) => {
@@ -50,6 +50,7 @@ const routes: FastifyPluginAsync = async (server) => {
             type: {
               type: 'string',
               description: 'Walker Type: Dinghy, Falco...',
+              enum: Object.values(WalkerType),
             },
             description: {
               type: 'string',
@@ -80,25 +81,19 @@ const routes: FastifyPluginAsync = async (server) => {
         request.query?.pageSize && request.query?.pageSize > 0 ? request.query.pageSize : 10;
       let page: number = request.query?.page && request.query.page > 0 ? request.query.page : 1;
 
-      const name: string | undefined = request.query?.name
-        ? server.mysql.escape(request.query.name)
-        : undefined;
-      const owner: string | undefined = request.query?.owner
-        ? server.mysql.escape(request.query.owner)
-        : undefined;
+      const name: string | undefined = request.query?.name ? `%${request.query.name}%` : undefined;
+      const owner: string | undefined = request.query?.owner ? request.query.owner : undefined;
       const lastuser: string | undefined = request.query?.lastuser
-        ? server.mysql.escape(request.query.lastuser)
+        ? request.query.lastuser
         : undefined;
       const walkerid: string | undefined = request.query?.walkerid
-        ? server.mysql.escape(request.query.walkerid)
+        ? request.query.walkerid
         : undefined;
       const ready: boolean | undefined = request.query?.ready ?? undefined;
-      const type: string | undefined = request.query?.type
-        ? server.mysql.escape(request.query.type)
-        : undefined;
+      const type: WalkerType | undefined = request.query?.type ? request.query.type : undefined;
       const use: WalkerUse | undefined = request.query?.use ?? undefined;
       const description: string | undefined = request.query?.description
-        ? server.mysql.escape(request.query.description)
+        ? `%${request.query.description}%`
         : undefined;
 
       if (pageSize < 1) {
@@ -112,7 +107,7 @@ const routes: FastifyPluginAsync = async (server) => {
       const queryValues: unknown[] = [];
 
       let sql =
-        'SELECT walkers.walkerID, walkers.name, walkers.ownerUser, walkers.lastUser, walkers.datelastuse, walkers.type, walkers.walker_use, walkers.isReady, walkers.description from walkers, clans where clans.discordid=walkers.discorid and clans.clanid=?';
+        'SELECT walkers.walkerID as walkerid, walkers.name, walkers.ownerUser, walkers.lastUser as lastuser, walkers.datelastuse, walkers.type, walkers.walker_use, walkers.isReady, walkers.description from walkers, clans where clans.discordid=walkers.discorid and clans.clanid=?';
       queryValues.push(request.dbuser.clanid);
 
       if (name) {

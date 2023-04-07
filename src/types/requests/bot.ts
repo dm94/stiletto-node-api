@@ -1,5 +1,5 @@
 import { Languages } from '@customtypes/discordconfig';
-import { WalkerUse } from '@customtypes/walkers';
+import { WalkerType, WalkerUse } from '@customtypes/walkers';
 import { RequestGenericInterface } from 'fastify/types/request';
 
 export interface GetDiscordServerRequest extends RequestGenericInterface {
@@ -32,7 +32,16 @@ export interface GetWalkersByServerRequest extends RequestGenericInterface {
     walkerid?: string;
     ready?: boolean;
     use?: WalkerUse;
-    type?: string;
+    type?: WalkerType;
     description?: string;
+  };
+}
+
+export interface AddWalkerRequest extends RequestGenericInterface {
+  Querystring: {
+    walkerid: string;
+    discordid: string;
+    name: string;
+    lastUser: string;
   };
 }

@@ -1,5 +1,5 @@
-import { GetWalkersByServerRequest } from '@customtypes/requests/bot';
-import { WalkerInfo, WalkerSchema, WalkerUse } from '@customtypes/walkers';
+import { AddWalkerRequest, GetWalkersByServerRequest } from '@customtypes/requests/bot';
+import { WalkerInfo, WalkerSchema, WalkerUse, WalkerType } from '@customtypes/walkers';
 import { Type } from '@sinclair/typebox';
 import { FastifyPluginAsync } from 'fastify';
 
@@ -53,6 +53,7 @@ const routes: FastifyPluginAsync = async (server) => {
             type: {
               type: 'string',
               description: 'Walker Type: Dinghy, Falco...',
+              enum: Object.values(WalkerType),
             },
             description: {
               type: 'string',
@@ -78,25 +79,19 @@ const routes: FastifyPluginAsync = async (server) => {
         request.query?.pageSize && request.query?.pageSize > 0 ? request.query.pageSize : 10;
       let page: number = request.query?.page && request.query.page > 0 ? request.query.page : 1;
 
-      const name: string | undefined = request.query?.name
-        ? server.mysql.escape(request.query.name)
-        : undefined;
-      const owner: string | undefined = request.query?.owner
-        ? server.mysql.escape(request.query.owner)
-        : undefined;
+      const name: string | undefined = request.query?.name ? `%${request.query.name}%` : undefined;
+      const owner: string | undefined = request.query?.owner ? request.query.owner : undefined;
       const lastuser: string | undefined = request.query?.lastuser
-        ? server.mysql.escape(request.query.lastuser)
+        ? request.query.lastuser
         : undefined;
       const walkerid: string | undefined = request.query?.walkerid
-        ? server.mysql.escape(request.query.walkerid)
+        ? request.query.walkerid
         : undefined;
       const ready: boolean | undefined = request.query?.ready ?? undefined;
-      const type: string | undefined = request.query?.type
-        ? server.mysql.escape(request.query.type)
-        : undefined;
+      const type: WalkerType | undefined = request.query?.type ? request.query.type : undefined;
       const use: WalkerUse | undefined = request.query?.use ?? undefined;
       const description: string | undefined = request.query?.description
-        ? server.mysql.escape(request.query.description)
+        ? `%${request.query.description}%`
         : undefined;
 
       if (pageSize < 1) {
@@ -110,7 +105,7 @@ const routes: FastifyPluginAsync = async (server) => {
       const queryValues: unknown[] = [];
 
       let sql =
-        'SELECT walkerID, walkers.name, walkers.ownerUser, walkers.lastUser, walkers.datelastuse, walkers.type, walkers.walker_use, walkers.isReady, walkers.description FROM walkers WHERE discorid=?';
+        'SELECT walkerID as walkerid, discorid as discordid, name, ownerUser, lastUser as lastuser, datelastuse, type, walker_use as "use", isReady, description FROM walkers WHERE discorid=?';
       queryValues.push(request.query.discordid);
 
       if (name) {
@@ -149,13 +144,150 @@ const routes: FastifyPluginAsync = async (server) => {
       sql += ` ORDER BY walkers.datelastuse DESC LIMIT ${pageSize} OFFSET ${offset}`;
 
       server.mysql.query(sql, queryValues, (err, result) => {
+        console.log('result', result);
         if (result) {
           return reply.code(200).send(result as WalkerInfo[]);
-        }
-        if (err) {
+        } else if (err) {
+          console.log('err', err);
           return reply.code(503).send();
         }
       });
+    },
+  );
+  server.post<AddWalkerRequest>(
+    '/',
+    {
+      onRequest: [server.botAuth],
+      schema: {
+        description: 'Add or update a walker',
+        summary: 'addWalker',
+        operationId: 'addWalker',
+        tags: ['bot', 'walkers'],
+        querystring: {
+          type: 'object',
+          required: ['walkerid', 'discordid', 'name', 'lastUser'],
+          properties: {
+            walkerid: {
+              type: 'string',
+            },
+            discordid: {
+              type: 'string',
+            },
+            name: {
+              type: 'string',
+            },
+            lastUser: {
+              type: 'string',
+            },
+          },
+        },
+        security: [
+          {
+            apiKey: [],
+          },
+        ],
+        response: {
+          201: Type.Object({
+            message: Type.String(),
+          }),
+        },
+      },
+    },
+    (request, reply) => {
+      if (
+        !request?.query?.discordid ||
+        !request?.query?.walkerid ||
+        !request?.query?.name ||
+        !request?.query?.lastUser
+      ) {
+        return reply.code(400).send();
+      }
+
+      const walkerid: string = request.query.walkerid;
+      const discordid: string = request.query.discordid;
+      const name: string = request.query.name;
+      const lastuser: string = request.query.lastUser;
+
+      const date = new Date().toISOString().split('T')[0];
+
+      server.mysql.query(
+        'select * from walkers where name=? and discorid=?',
+        [name, discordid],
+        (err, result) => {
+          if (result && result[0]) {
+            server.mysql.query(
+              'update walkers set datelastuse=?, lastUser=?, walkerID=? where name=? and discorid=?',
+              [date, lastuser, walkerid, name, discordid],
+              (err, result) => {
+                if (result) {
+                  return reply.code(201).send({
+                    message: 'Walker created',
+                  });
+                }
+                if (err) {
+                  return reply.code(503).send();
+                }
+              },
+            );
+          } else if (err) {
+            return reply.code(503).send();
+          } else {
+            let walkerUse: WalkerUse | undefined = undefined;
+            let walkerType: WalkerType | undefined = undefined;
+
+            const nameLowerCase = name.toLowerCase();
+
+            Object.keys(WalkerUse)
+              .map((key) => WalkerUse[key])
+              .forEach((key) => {
+                if (nameLowerCase.includes(key.toLowerCase())) {
+                  walkerUse = key;
+                }
+              });
+
+            if (nameLowerCase.includes('spider')) {
+              walkerType = WalkerType.NOMAD_SPIDER;
+            } else if (nameLowerCase.includes('raptor')) {
+              walkerType = WalkerType.RAPTOR_SKY;
+            } else {
+              Object.keys(WalkerType)
+                .map((key) => WalkerType[key])
+                .forEach((key) => {
+                  if (nameLowerCase.includes(key.toLowerCase())) {
+                    walkerType = key;
+                  }
+                });
+            }
+
+            server.mysql.query(
+              'insert into walkers(walkerID,discorid,name,lastUser,datelastuse, walker_use, type, isReady) values(?,?,?,?,?,?,?,0) ON DUPLICATE KEY UPDATE name=?, datelastuse=?, lastUser=?, discorid=?',
+              [
+                walkerid,
+                discordid,
+                name,
+                lastuser,
+                date,
+                walkerUse,
+                walkerType,
+                name,
+                date,
+                lastuser,
+                discordid,
+              ],
+              (err, result) => {
+                if (result) {
+                  return reply.code(201).send({
+                    message: 'Walker created',
+                  });
+                }
+                if (err) {
+                  return reply.code(503).send();
+                }
+              },
+            );
+          }
+        },
+      );
     },
   );
 };
