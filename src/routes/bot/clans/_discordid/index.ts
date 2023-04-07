@@ -1,4 +1,5 @@
 import { Permission, Permissions, PermissionsSchema } from '@customtypes/permissions';
+import { RelationshipInfo, RelationshipSchema } from '@customtypes/relationships';
 import {
   GetDiscordServerRequest,
   KickFromClanRequest,
@@ -164,7 +165,7 @@ const routes: FastifyPluginAsync = async (server) => {
       );
     },
   );
-  server.get<GetDiscordServerRequest, { Reply: Permissions }>(
+  server.get<GetDiscordServerRequest, { Reply: Permissions[] }>(
     '/members',
     {
       onRequest: [server.botAuth],
@@ -196,6 +197,50 @@ const routes: FastifyPluginAsync = async (server) => {
 
       server.mysql.query(
         'SELECT clanpermissions.clanid, clanpermissions.discordID as discordid, clanpermissions.request, clanpermissions.kickmembers, clanpermissions.walkers, clanpermissions.bot, clanpermissions.diplomacy FROM clanpermissions, clans WHERE clanpermissions.clanid=clans.clanid and clans.discordid=?',
+        [request.params.discordid],
+        (e, result) => {
+          if (result) {
+            return reply.code(200).send(result);
+          }
+          if (e) {
+            return reply.code(503).send();
+          }
+        },
+      );
+    },
+  );
+  server.get<GetDiscordServerRequest, { Reply: RelationshipInfo[] }>(
+    '/relationships',
+    {
+      onRequest: [server.botAuth],
+      schema: {
+        description: 'Return the list of relationships for the clan',
+        summary: 'getRelationshipsByBot',
+        operationId: 'getRelationshipsByBot',
+        tags: ['bot', 'clan'],
+        params: {
+          type: 'object',
+          properties: {
+            discordid: { type: 'string' },
+          },
+        },
+        security: [
+          {
+            apiKey: [],
+          },
+        ],
+        response: {
+          200: Type.Array(RelationshipSchema),
+        },
+      },
+    },
+    (request, reply) => {
+      if (!request?.params?.discordid) {
+        return reply.code(400).send();
+      }
+
+      server.mysql.query(
+        'SELECT clans.leaderid, diplomacy.id, diplomacy.typed, diplomacy.clanflag flagcolor, diplomacy.nameotherclan name, diplomacy.symbol FROM clans LEFT JOIN diplomacy on clans.clanid=diplomacy.idcreatorclan where clans.discordid=?',
         [request.params.discordid],
         (e, result) => {
           if (result) {
