@@ -12,6 +12,7 @@ import { ResourceSchema } from '@customtypes/resource';
 import { WalkerSchema } from '@customtypes/walkers';
 import { RecipeListSchema, RecipeSchema } from '@customtypes/recipes';
 import { TechTreeSchema, TechUserSchema } from '@customtypes/techtree';
+import { DiscordConfigBotSchema } from '@customtypes/discordconfig';
 
 export const schema = {
   openapi: {
@@ -69,6 +70,7 @@ export const schema = {
         RecipeListSchema,
         TechTreeSchema,
         TechUserSchema,
+        DiscordConfigBotSchema,
       },
     },
   },

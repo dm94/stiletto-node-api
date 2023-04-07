@@ -58,7 +58,7 @@ server.decorate('authenticate', async function (request, reply) {
   }
 });
 
-server.decorate('botAuth', async (request, reply, done) => {
+server.decorate('botAuth', (request, reply, done) => {
   if (!request?.headers?.apikey || request.headers.apikey !== server.config.API_KEY) {
     return reply.code(401).send(new Error('Invalid Api Key'));
   }
