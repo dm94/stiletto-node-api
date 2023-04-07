@@ -45,3 +45,13 @@ export interface AddWalkerRequest extends RequestGenericInterface {
     lastUser: string;
   };
 }
+
+export interface BotEditWalkerRequest extends RequestGenericInterface {
+  Querystring: {
+    walkerid: string;
+    ready: boolean;
+  };
+  Params: {
+    discordid: string;
+  };
+}

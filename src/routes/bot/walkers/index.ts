@@ -1,4 +1,8 @@
-import { AddWalkerRequest, GetWalkersByServerRequest } from '@customtypes/requests/bot';
+import {
+  AddWalkerRequest,
+  BotEditWalkerRequest,
+  GetWalkersByServerRequest,
+} from '@customtypes/requests/bot';
 import { WalkerInfo, WalkerSchema, WalkerUse, WalkerType } from '@customtypes/walkers';
 import { Type } from '@sinclair/typebox';
 import { FastifyPluginAsync } from 'fastify';
@@ -285,6 +289,70 @@ const routes: FastifyPluginAsync = async (server) => {
                 }
               },
             );
+          }
+        },
+      );
+    },
+  );
+  server.put<BotEditWalkerRequest>(
+    '/:discordid',
+    {
+      onRequest: [server.botAuth],
+      schema: {
+        description: 'If is PVP walker, it is marked as not ready',
+        summary: 'botEditWalker',
+        operationId: 'botEditWalker',
+        tags: ['bot', 'walkers'],
+        params: {
+          type: 'object',
+          properties: {
+            discordid: { type: 'string' },
+          },
+        },
+        querystring: {
+          type: 'object',
+          required: ['walkerid', 'ready'],
+          properties: {
+            walkerid: {
+              type: 'string',
+            },
+            ready: {
+              type: 'boolean',
+            },
+          },
+        },
+        security: [
+          {
+            apiKey: [],
+          },
+        ],
+        response: {
+          200: Type.Object({
+            message: Type.String(),
+          }),
+        },
+      },
+    },
+    (request, reply) => {
+      if (!request?.params?.discordid || !request?.query?.walkerid) {
+        return reply.code(400).send();
+      }
+
+      const walkerid: string = request.query.walkerid;
+      const discordid: string = request.params.discordid;
+      const ready: boolean | undefined = request.query?.ready ?? undefined;
+
+      server.mysql.query(
+        'update walkers set isReady=? where discorid=? and walkerID=?',
+        [ready, discordid, walkerid],
+        (err, result) => {
+          if (result) {
+            return reply.code(200).send({
+              message: 'Walker updated',
+            });
+          }
+          if (err) {
+            return reply.code(503).send();
           }
         },
       );
