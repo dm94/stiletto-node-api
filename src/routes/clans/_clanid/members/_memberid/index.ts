@@ -1,4 +1,9 @@
-import { Error400Default, Error401Default, Error503Default } from '@customtypes/errors';
+import {
+  Error400Default,
+  Error401Default,
+  Error405Default,
+  Error503Default,
+} from '@customtypes/errors';
 import { MemberActions } from '@customtypes/members';
 import { Permission } from '@customtypes/permissions';
 import { GetMemberRequest } from '@customtypes/requests/members';
@@ -48,6 +53,7 @@ const routes: FastifyPluginAsync = async (server) => {
           }),
           400: Error400Default,
           401: Error401Default,
+          405: Error405Default,
           503: Error503Default,
         },
       },

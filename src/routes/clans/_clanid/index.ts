@@ -3,6 +3,7 @@ import {
   Error400Default,
   Error401Default,
   Error404Default,
+  Error405Default,
   Error503Default,
 } from '@customtypes/errors';
 import { DeleteClanRequest, GetClanRequest, UpdateClanRequest } from '@customtypes/requests/clans';
@@ -102,6 +103,7 @@ const routes: FastifyPluginAsync = async (server) => {
           }),
           400: Error400Default,
           401: Error401Default,
+          405: Error405Default,
           503: Error503Default,
         },
       },
@@ -197,6 +199,7 @@ const routes: FastifyPluginAsync = async (server) => {
           }),
           400: Error400Default,
           401: Error401Default,
+          405: Error405Default,
           503: Error503Default,
         },
       },

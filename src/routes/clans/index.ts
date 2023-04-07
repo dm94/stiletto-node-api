@@ -1,5 +1,10 @@
 import { ClanInfo, ClanSchema } from '@customtypes/clans';
-import { Error400Default, Error401Default, Error503Default } from '@customtypes/errors';
+import {
+  Error400Default,
+  Error401Default,
+  Error405Default,
+  Error503Default,
+} from '@customtypes/errors';
 import { CreateClanRequest, GetClansRequest } from '@customtypes/requests/clans';
 import { Type } from '@sinclair/typebox';
 import { FastifyPluginAsync } from 'fastify';
@@ -127,6 +132,7 @@ const routes: FastifyPluginAsync = async (server) => {
           }),
           400: Error400Default,
           401: Error401Default,
+          405: Error405Default,
           503: Error503Default,
         },
       },
@@ -233,23 +239,21 @@ const routes: FastifyPluginAsync = async (server) => {
             message: Type.String(),
           }),
           401: Error401Default,
+          405: Error405Default,
           503: Error503Default,
         },
       },
     },
     (request, reply) => {
       if (!request?.dbuser) {
-        reply.code(401);
-        return new Error('Invalid token JWT');
+        return reply.code(401).send(new Error('Invalid token JWT'));
       }
       if (!request?.dbuser.clanid) {
-        reply.code(401);
-        return new Error('You do not have a clan');
+        return reply.code(401).send(new Error('You do not have a clan'));
       }
 
       if (request?.dbuser.discordid === request?.dbuser.leaderid) {
-        reply.code(405);
-        return new Error("You can't leave a clan if you are the clan leader");
+        return reply.code(405).send(new Error("You can't leave a clan if you are the clan leader"));
       }
 
       const clanId = Number(request.dbuser.clanid);

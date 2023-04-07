@@ -8,6 +8,7 @@ import {
   Error400Default,
   Error401Default,
   Error404Default,
+  Error405Default,
   Error503Default,
 } from '@customtypes/errors';
 
@@ -37,6 +38,7 @@ const routes: FastifyPluginAsync = async (server) => {
           400: Error400Default,
           401: Error401Default,
           404: Error404Default,
+          405: Error405Default,
           503: Error503Default,
         },
       },
@@ -131,6 +133,7 @@ const routes: FastifyPluginAsync = async (server) => {
           }),
           400: Error400Default,
           401: Error401Default,
+          405: Error405Default,
           503: Error503Default,
         },
       },
@@ -187,8 +190,7 @@ const routes: FastifyPluginAsync = async (server) => {
             },
           );
         } else {
-          reply.code(405);
-          return new Error('Your clan does not have a linked discord');
+          return reply.code(405).send(new Error('Your clan does not have a linked discord'));
         }
       } else {
         return reply.code(400).send();
