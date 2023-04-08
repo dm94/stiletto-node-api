@@ -1,7 +1,6 @@
 import {
   Error400Default,
   Error401Default,
-  Error404Default,
   Error405Default,
   Error503Default,
 } from '@customtypes/errors';
@@ -38,7 +37,6 @@ const routes: FastifyPluginAsync = async (server) => {
           200: Type.Array(RelationshipSchema),
           400: Error400Default,
           401: Error401Default,
-          404: Error404Default,
           503: Error503Default,
         },
       },
@@ -60,15 +58,14 @@ const routes: FastifyPluginAsync = async (server) => {
 
       const clanId = Number(request.params.clanid);
       server.mysql.query(
-        'SELECT clans.leaderid, diplomacy.id, diplomacy.typed, diplomacy.clanflag flagcolor, diplomacy.nameotherclan name, diplomacy.symbol FROM clans LEFT JOIN diplomacy on clans.clanid=diplomacy.idcreatorclan where clans.clanid=?',
+        'SELECT clans.leaderid, diplomacy.id, diplomacy.typed, diplomacy.clanflag as flagcolor, diplomacy.nameotherclan as name, diplomacy.symbol FROM clans JOIN diplomacy on clans.clanid=diplomacy.idcreatorclan where clans.clanid=?',
         clanId,
         (err, result) => {
           if (result) {
             return reply.code(200).send(result as RelationshipInfo[]);
-          } else if (err) {
+          }
+          if (err) {
             return reply.code(503).send();
-          } else {
-            return reply.code(404).send();
           }
         },
       );

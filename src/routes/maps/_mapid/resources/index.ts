@@ -165,10 +165,13 @@ const routes: FastifyPluginAsync = async (server) => {
 
       const resourceType: string = request.query?.resourcetype ?? 'Aloe';
       const x: number = request.query?.x;
-      const y: number = request.query?.x;
+      const y: number = request.query?.y;
       let quality: number = request.query?.quality ?? 0;
       const description: string = request.query?.description ?? '';
-      const harvested: string = request.query?.harvested ?? new Date().toISOString().split('T')[0];
+      const harvested: string =
+        request.query?.harvested && request.query?.harvested.length > 1
+          ? request.query?.harvested
+          : new Date().toISOString().split('T')[0];
 
       if (quality > 100) {
         quality = 100;

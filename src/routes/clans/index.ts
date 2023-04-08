@@ -157,67 +157,67 @@ const routes: FastifyPluginAsync = async (server) => {
       }
 
       if (
-        name &&
-        name.length < 50 &&
-        name.length > 3 &&
-        (!discord || discord.length < 10) &&
-        (!color || color.length < 10) &&
-        (!region || region.length < 10) &&
-        (!symbol || symbol.length < 5)
+        !name ||
+        name.length > 50 ||
+        name.length < 3 ||
+        (discord && discord.length > 10) ||
+        (color && color.length > 10) ||
+        (region && region.length > 30) ||
+        (symbol && symbol.length > 5)
       ) {
-        if (region) {
-          server.mysql.query(
-            "select * FROM clusters WHERE CONCAT_WS(' - ', region, name) = ?",
-            [region],
-            (err, result) => {
-              if ((result && !result[0]) || err) {
-                region = 'EU-Official';
-              }
-            },
-          );
-        } else {
-          region = 'EU-Official';
-        }
+        return reply.code(400).send();
+      }
 
-        const date = new Date().toISOString().split('T')[0];
-
+      if (region) {
         server.mysql.query(
-          'insert into clans(name,leaderid,invitelink,flagcolor,creationdate, recruitment, region, symbol) values(?,?,?,?,?,?,?,?)',
-          [name, request.dbuser.discordid, discord, color, date, recruit, region, symbol],
+          "select * FROM clusters WHERE CONCAT_WS(' - ', region, name) = ?",
+          [region],
           (err, result) => {
-            if (result) {
-              server.mysql.query(
-                'select clanid from clans where leaderid=?',
-                [request.dbuser.discordid],
-                (erro, result1) => {
-                  if (result1 && result1[0]?.clanid) {
-                    const clanId = result1[0].clanid;
-                    server.mysql.query(
-                      'update users set clanid=? where discordID=?',
-                      [clanId, request.dbuser.discordid],
-                      (error, result2) => {
-                        if (result2) {
-                          return reply.code(201).send({
-                            message: 'Clan created',
-                          });
-                        } else if (error) {
-                          return reply.code(503).send();
-                        }
-                      },
-                    );
-                  } else if (erro) {
-                    return reply.code(503).send();
-                  }
-                },
-              );
-            } else if (err) {
-              return reply.code(503).send();
+            if ((result && !result[0]) || err) {
+              region = 'EU-Official';
             }
           },
         );
       } else {
-        return reply.code(400).send();
+        region = 'EU-Official';
       }
+
+      const date = new Date().toISOString().split('T')[0];
+
+      server.mysql.query(
+        'insert into clans(name,leaderid,invitelink,flagcolor,creationdate, recruitment, region, symbol) values(?,?,?,?,?,?,?,?)',
+        [name, request.dbuser.discordid, discord, color, date, recruit, region, symbol],
+        (err, result) => {
+          if (result) {
+            server.mysql.query(
+              'select clanid from clans where leaderid=?',
+              [request.dbuser.discordid],
+              (erro, result1) => {
+                if (result1 && result1[0]?.clanid) {
+                  const clanId = result1[0].clanid;
+                  server.mysql.query(
+                    'update users set clanid=? where discordID=?',
+                    [clanId, request.dbuser.discordid],
+                    (error, result2) => {
+                      if (result2) {
+                        return reply.code(201).send({
+                          message: 'Clan created',
+                        });
+                      } else if (error) {
+                        return reply.code(503).send();
+                      }
+                    },
+                  );
+                } else if (erro) {
+                  return reply.code(503).send();
+                }
+              },
+            );
+          } else if (err) {
+            return reply.code(503).send();
+          }
+        },
+      );
     },
   );
   server.delete(
