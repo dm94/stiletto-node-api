@@ -45,12 +45,12 @@ const routes: FastifyPluginAsync = async (server) => {
               server.mysql.query(
                 'select users.nickname, users.discordtag, users.discordID discordid, users.clanid, users.token from users where users.discordID=?',
                 discordId,
-                (err, result) => {
+                async (err, result) => {
                   if (result && result[0]?.token) {
                     token = result[0].token;
                     try {
-                      server.jwt.verify(result[0].token, (err) => {
-                        if (!err) {
+                      server.jwt.verify(result[0].token, (error) => {
+                        if (!error) {
                           return reply.code(202).send({
                             discordid: discordId,
                             discordTag: username,
@@ -62,7 +62,7 @@ const routes: FastifyPluginAsync = async (server) => {
                       console.log('The token is malformed.', discordId);
                     }
                   }
-                  token = server.jwt.sign({ discordid: discordId }, { expiresIn: '30d' });
+                  token = await reply.jwtSign({ discordid: discordId }, { expiresIn: '30d' });
 
                   const date = new Date().toISOString().split('T')[0];
 
