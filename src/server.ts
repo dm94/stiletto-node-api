@@ -29,7 +29,10 @@ const server = fastify({
 });
 
 await server.register(cors, {
-  // put your options here
+  origin: '*',
+  methods: ['POST', 'GET', 'PUT', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
 });
 
 if (process.env.MYSQL_CONNECTION) {
