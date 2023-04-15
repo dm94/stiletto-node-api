@@ -41,13 +41,11 @@ const routes: FastifyPluginAsync = async (server) => {
             const discordId = user.id;
 
             if (discordId) {
-              let token: undefined | string = undefined;
               server.mysql.query(
                 'select users.nickname, users.discordtag, users.discordID discordid, users.clanid, users.token from users where users.discordID=?',
                 discordId,
-                async (err, result) => {
+                (err, result) => {
                   if (result && result[0]?.token) {
-                    token = result[0].token;
                     try {
                       server.jwt.verify(result[0].token, (error) => {
                         if (!error) {
@@ -62,19 +60,19 @@ const routes: FastifyPluginAsync = async (server) => {
                       console.log('The token is malformed.', discordId);
                     }
                   }
-                  token = await reply.jwtSign({ discordid: discordId }, { expiresIn: '30d' });
+                  reply.jwtSign({ discordid: discordId }, { expiresIn: '30d' }).then((token) => {
+                    const date = new Date().toISOString().split('T')[0];
 
-                  const date = new Date().toISOString().split('T')[0];
+                    server.mysql.query(
+                      'INSERT INTO users(discordID, discordTag,token,createdAt) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE token=?, lastUpdate=?',
+                      [discordId, username, token, date, token, date],
+                    );
 
-                  server.mysql.query(
-                    'INSERT INTO users(discordID, discordTag,token,createdAt) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE token=?, lastUpdate=?',
-                    [discordId, username, token, date, token, date],
-                  );
-
-                  return reply.code(202).send({
-                    discordid: discordId,
-                    discordTag: username,
-                    token: token,
+                    return reply.code(202).send({
+                      discordid: discordId,
+                      discordTag: username,
+                      token: token,
+                    });
                   });
                 },
               );
