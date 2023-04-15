@@ -14,3 +14,9 @@ export interface GetTechRequest extends RequestGenericInterface {
     tree: string;
   };
 }
+
+export interface AuthRequest extends RequestGenericInterface {
+  Querystring: {
+    code: string;
+  };
+}

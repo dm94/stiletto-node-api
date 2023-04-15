@@ -23,6 +23,7 @@ export const getAccessToken = async (code: string, extra?: object) => {
     //@ts-ignore
     return await oauth.tokenRequest(data);
   } catch (e) {
+    console.log('Error', e);
     return null;
   }
 };
