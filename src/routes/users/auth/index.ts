@@ -48,25 +48,23 @@ const routes: FastifyPluginAsync = async (server) => {
                 (err, result) => {
                   if (result && result[0]?.token) {
                     token = result[0].token;
+                    try {
+                      server.jwt.verify(result[0].token, (err) => {
+                        if (!err) {
+                          return reply.code(202).send({
+                            discordid: discordId,
+                            discordTag: username,
+                            token: result[0].token,
+                          });
+                        }
+                      });
+                    } catch (e) {
+                      console.log('The token is malformed.', discordId);
+                    }
                   }
                 },
               );
 
-              if (token) {
-                try {
-                  server.jwt.verify(token, (err) => {
-                    if (!err) {
-                      return reply.code(202).send({
-                        discordid: discordId,
-                        discordTag: username,
-                        token: token,
-                      });
-                    }
-                  });
-                } catch (e) {
-                  console.log('The token is malformed.', discordId);
-                }
-              }
               token = server.jwt.sign({ discordid: discordId }, { expiresIn: '30d' });
 
               const date = new Date().toISOString().split('T')[0];
@@ -87,6 +85,7 @@ const routes: FastifyPluginAsync = async (server) => {
           return reply.code(401).send();
         }
       } catch (e) {
+        console.log('Auth Error', e);
         return reply.code(500).send();
       }
     },
