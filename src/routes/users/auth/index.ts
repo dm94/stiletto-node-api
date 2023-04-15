@@ -62,27 +62,30 @@ const routes: FastifyPluginAsync = async (server) => {
                       console.log('The token is malformed.', discordId);
                     }
                   }
+                  token = server.jwt.sign({ discordid: discordId }, { expiresIn: '30d' });
+
+                  const date = new Date().toISOString().split('T')[0];
+
+                  server.mysql.query(
+                    'INSERT INTO users(discordID, discordTag,token,createdAt) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE token=?, lastUpdate=?',
+                    [discordId, username, token, date, token, date],
+                  );
+
+                  return reply.code(202).send({
+                    discordid: discordId,
+                    discordTag: username,
+                    token: token,
+                  });
                 },
               );
-
-              token = server.jwt.sign({ discordid: discordId }, { expiresIn: '30d' });
-
-              const date = new Date().toISOString().split('T')[0];
-
-              server.mysql.query(
-                'INSERT INTO users(discordID, discordTag,token,createdAt) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE token=?, lastUpdate=?',
-                [discordId, username, token, date, token, date],
-              );
-
-              return reply.code(202).send({
-                discordid: discordId,
-                discordTag: username,
-                token: token,
-              });
+            } else {
+              return reply.code(400).send();
             }
+          } else {
+            return reply.code(400).send();
           }
         } else {
-          return reply.code(401).send();
+          return reply.code(400).send();
         }
       } catch (e) {
         console.log('Auth Error', e);
