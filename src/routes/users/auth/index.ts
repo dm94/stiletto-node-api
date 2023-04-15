@@ -41,38 +41,34 @@ const routes: FastifyPluginAsync = async (server) => {
             const discordId = user.id;
 
             if (discordId) {
+              const token = await reply.jwtSign({ discordid: discordId }, { expiresIn: '30d' });
               server.mysql.query(
                 'select users.nickname, users.discordtag, users.discordID discordid, users.clanid, users.token from users where users.discordID=?',
                 discordId,
                 (err, result) => {
                   if (result && result[0]?.token) {
                     try {
-                      server.jwt.verify(result[0].token, (error) => {
-                        if (!error) {
-                          return reply.code(202).send({
-                            discordid: discordId,
-                            discordTag: username,
-                            token: result[0].token,
-                          });
-                        }
-                      });
+                      const valid = server.jwt.verify(result[0].token);
+                      if (valid) {
+                        return reply.code(202).send({
+                          discordid: discordId,
+                          token: result[0].token,
+                        });
+                      }
                     } catch (e) {
                       console.log('The token is malformed.', discordId);
                     }
                   }
-                  reply.jwtSign({ discordid: discordId }, { expiresIn: '30d' }).then((token) => {
-                    const date = new Date().toISOString().split('T')[0];
 
-                    server.mysql.query(
-                      'INSERT INTO users(discordID, discordTag,token,createdAt) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE token=?, lastUpdate=?',
-                      [discordId, username, token, date, token, date],
-                    );
+                  const date = new Date().toISOString().split('T')[0];
+                  server.mysql.query(
+                    'INSERT INTO users(discordID, discordTag,token,createdAt) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE token=?, lastUpdate=?',
+                    [discordId, username, token, date, token, date],
+                  );
 
-                    return reply.code(202).send({
-                      discordid: discordId,
-                      discordTag: username,
-                      token: token,
-                    });
+                  return reply.code(202).send({
+                    discordid: discordId,
+                    token: token,
                   });
                 },
               );
