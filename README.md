@@ -12,7 +12,7 @@ Web with different utilities for the game Last Oasis, but is not affiliated with
 
 It is created with JS (react), HTML, CSS (bootstrap) and API fastify
 
-You can see this website in operation here: [https://www.stiletto.live/](https://www.stiletto.live/)
+You can see this website in operation here: [https://stiletto.deeme.dev/](https://stiletto.deeme.dev/)
 
 ## Installation
 
