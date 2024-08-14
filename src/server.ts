@@ -29,10 +29,10 @@ const server = fastify({
 });
 
 await server.register(cors, {
-  origin: '*',
   methods: ['POST', 'GET', 'PUT', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
+  origin: ["https://stiletto.deeme.dev", /\.deeme\.dev$/],
 });
 
 if (process.env.MYSQL_CONNECTION) {
