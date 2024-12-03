@@ -33,7 +33,7 @@ export const getUser = async (accessToken: string) => {
 
   try {
     return await oauth.getUser(accessToken);
-  } catch (e) {
+  } catch (_e) {
     return null;
   }
 };
@@ -43,7 +43,7 @@ export const getGuilds = async (accessToken: string) => {
 
   try {
     return await oauth.getUserGuilds(accessToken);
-  } catch (e) {
+  } catch (_e) {
     return null;
   }
 };

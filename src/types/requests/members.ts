@@ -1,5 +1,5 @@
-import { MemberActions } from '@customtypes/members';
-import { RequestGenericInterface } from 'fastify/types/request';
+import type { MemberActions } from '@customtypes/members';
+import type { RequestGenericInterface } from 'fastify/types/request';
 
 export interface GetMemberRequest extends RequestGenericInterface {
   Params: {

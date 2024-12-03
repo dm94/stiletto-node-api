@@ -4,17 +4,17 @@ import {
   Error404Default,
   Error503Default,
 } from '@customtypes/errors';
-import { MapInfo, MapSchema } from '@customtypes/maps';
-import { EditMapRequest, GetMapRequest } from '@customtypes/requests/maps';
+import { type MapInfo, MapSchema } from '@customtypes/maps';
+import type { EditMapRequest, GetMapRequest } from '@customtypes/requests/maps';
 import { addMapInfo } from '@services/mapinfo';
 import { Type } from '@sinclair/typebox';
-import { FastifyPluginAsync } from 'fastify';
+import type { FastifyPluginAsync } from 'fastify';
 
 const routes: FastifyPluginAsync = async (server) => {
   server.get<GetMapRequest, { Reply: MapInfo }>(
     '/',
     {
-      onRequest: [(request, reply, done) => addMapInfo(server, request, done)],
+      onRequest: [(request, _reply, done) => addMapInfo(server, request, done)],
       schema: {
         description: 'Returns map information',
         summary: 'getMap',
@@ -131,7 +131,8 @@ const routes: FastifyPluginAsync = async (server) => {
             return reply.code(202).send({
               message: 'Map edited',
             });
-          } else if (err) {
+          }
+          if (err) {
             return reply.code(503).send();
           }
         },
@@ -179,7 +180,7 @@ const routes: FastifyPluginAsync = async (server) => {
         'select * from clanmaps where mapid=? and discordID=?',
         [request.params.mapid, request.dbuser.discordid],
         (err, result) => {
-          if (result && result[0]) {
+          if (result?.[0]) {
             server.mysql.query(
               'delete from clanmaps where mapid=? and discordID=?',
               [request.params.mapid, request.dbuser.discordid],
@@ -199,11 +200,11 @@ const routes: FastifyPluginAsync = async (server) => {
               },
             );
             return reply.code(204).send();
-          } else if (err) {
-            return reply.code(503).send();
-          } else {
-            return reply.code(404).send();
           }
+          if (err) {
+            return reply.code(503).send();
+          }
+          return reply.code(404).send();
         },
       );
     },

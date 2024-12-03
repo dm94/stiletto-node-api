@@ -1,5 +1,5 @@
-import { RequestActions } from '@customtypes/member-request';
-import { RequestGenericInterface } from 'fastify/types/request';
+import type { RequestActions } from '@customtypes/member-request';
+import type { RequestGenericInterface } from 'fastify/types/request';
 
 export interface RequestClanRequest extends RequestGenericInterface {
   Querystring: {

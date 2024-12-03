@@ -1,4 +1,4 @@
-import { ClanInfo, ClanSchema } from '@customtypes/clans';
+import { type ClanInfo, ClanSchema } from '@customtypes/clans';
 import {
   Error400Default,
   Error401Default,
@@ -6,9 +6,13 @@ import {
   Error405Default,
   Error503Default,
 } from '@customtypes/errors';
-import { DeleteClanRequest, GetClanRequest, UpdateClanRequest } from '@customtypes/requests/clans';
+import type {
+  DeleteClanRequest,
+  GetClanRequest,
+  UpdateClanRequest,
+} from '@customtypes/requests/clans';
 import { Type } from '@sinclair/typebox';
-import { FastifyPluginAsync } from 'fastify';
+import type { FastifyPluginAsync } from 'fastify';
 
 const routes: FastifyPluginAsync = async (server) => {
   server.get<GetClanRequest, { Reply: ClanInfo }>(
@@ -40,13 +44,13 @@ const routes: FastifyPluginAsync = async (server) => {
           'select clans.clanid, clans.name, clans.discordid, clans.leaderid, clans.invitelink, clans.recruitment, clans.flagcolor, clans.symbol, clans.region, users.discordTag from clans, users where clans.leaderid=users.discordID and clans.clanid=?',
           clanId,
           (err, result) => {
-            if (result && result[0]) {
+            if (result?.[0]) {
               return reply.code(200).send(result[0]);
-            } else if (err) {
-              return reply.code(503).send();
-            } else {
-              return reply.code(404).send();
             }
+            if (err) {
+              return reply.code(503).send();
+            }
+            return reply.code(404).send();
           },
         );
       } else {
@@ -162,7 +166,8 @@ const routes: FastifyPluginAsync = async (server) => {
               return reply.code(200).send({
                 message: 'Clan updated',
               });
-            } else if (err) {
+            }
+            if (err) {
               return reply.code(503).send();
             }
           },
@@ -249,9 +254,8 @@ const routes: FastifyPluginAsync = async (server) => {
         });
 
         return reply.code(204).send();
-      } else {
-        return reply.code(400).send();
       }
+      return reply.code(400).send();
     },
   );
 };

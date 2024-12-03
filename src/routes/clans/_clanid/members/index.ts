@@ -4,10 +4,10 @@ import {
   Error404Default,
   Error503Default,
 } from '@customtypes/errors';
-import { MemberInfo, MemberSchema } from '@customtypes/members';
-import { GetClanRequest } from '@customtypes/requests/clans';
+import { type MemberInfo, MemberSchema } from '@customtypes/members';
+import type { GetClanRequest } from '@customtypes/requests/clans';
 import { Type } from '@sinclair/typebox';
-import { FastifyPluginAsync } from 'fastify';
+import type { FastifyPluginAsync } from 'fastify';
 
 const routes: FastifyPluginAsync = async (server) => {
   server.get<GetClanRequest, { Reply: MemberInfo[] }>(
@@ -57,11 +57,11 @@ const routes: FastifyPluginAsync = async (server) => {
           (err, result) => {
             if (result) {
               return reply.code(200).send(result as MemberInfo[]);
-            } else if (err) {
-              return reply.code(503).send();
-            } else {
-              return reply.code(404).send();
             }
+            if (err) {
+              return reply.code(503).send();
+            }
+            return reply.code(404).send();
           },
         );
       } else {

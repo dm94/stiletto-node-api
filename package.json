@@ -1,11 +1,11 @@
 {
   "name": "stiletto-node-api",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "description": "API for [Stiletto Web](https://github.com/dm94/stiletto-web)",
   "type": "module",
   "scripts": {
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
+    "lint": "biome lint --write ./src",
+    "format": "biome format --write ./src",
     "check:types": "tsc --noEmit",
     "build": "esbuild `find src \\( -name '*.ts' \\)` --platform=node --outdir=build --resolve-extensions=.js",
     "build:docker:prod": "docker build . -t my-fastify-app --build-arg APP_ENV=production",

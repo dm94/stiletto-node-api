@@ -4,16 +4,16 @@ import {
   Error404Default,
   Error503Default,
 } from '@customtypes/errors';
-import { Permission, Permissions, PermissionsSchema } from '@customtypes/permissions';
-import { RelationshipInfo, RelationshipSchema } from '@customtypes/relationships';
-import {
+import { Permission, type Permissions, PermissionsSchema } from '@customtypes/permissions';
+import { type RelationshipInfo, RelationshipSchema } from '@customtypes/relationships';
+import type {
   GetDiscordServerRequest,
   KickFromClanRequest,
   LinkClanRequest,
 } from '@customtypes/requests/bot';
 import { hasPermissions } from '@services/permission';
 import { Type } from '@sinclair/typebox';
-import { FastifyPluginAsync } from 'fastify';
+import type { FastifyPluginAsync } from 'fastify';
 
 const routes: FastifyPluginAsync = async (server) => {
   server.post<LinkClanRequest>(
@@ -71,7 +71,7 @@ const routes: FastifyPluginAsync = async (server) => {
         'select users.discordID, users.clanid clanid, clans.leaderid from users, clans where users.clanid=clans.clanid and users.discordID=?',
         [memberId],
         (e, r) => {
-          if (r && r[0]) {
+          if (r?.[0]) {
             const clanId = r[0].clanid;
             const leaderId = r[0].leaderid;
 
@@ -156,7 +156,7 @@ const routes: FastifyPluginAsync = async (server) => {
         'select users.discordID, users.clanid from users, clans where users.clanid=clans.clanid and users.nickname=? and clans.discordid=?',
         [nick, serverDiscordId],
         (e, r) => {
-          if (r && r[0]) {
+          if (r?.[0]) {
             const clanId = r[0].clanid;
             const discordId = r[0].discordID;
 
@@ -167,14 +167,15 @@ const routes: FastifyPluginAsync = async (server) => {
               ]);
               server.mysql.query('update users set clanid=null where discordID=?', [discordId]);
               return reply.code(204).send();
-            } else {
-              return reply.code(401).send();
             }
-          } else if (e) {
-            return reply.code(503).send();
-          } else {
-            return reply.code(404).send();
+            return reply.code(401).send();
           }
+
+          if (e) {
+            return reply.code(503).send();
+          }
+
+          return reply.code(404).send();
         },
       );
     },

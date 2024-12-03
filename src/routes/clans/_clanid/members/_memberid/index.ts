@@ -6,10 +6,10 @@ import {
 } from '@customtypes/errors';
 import { MemberActions } from '@customtypes/members';
 import { Permission } from '@customtypes/permissions';
-import { GetMemberRequest } from '@customtypes/requests/members';
+import type { GetMemberRequest } from '@customtypes/requests/members';
 import { addPermissions } from '@services/permission';
 import { Type } from '@sinclair/typebox';
-import { FastifyPluginAsync } from 'fastify';
+import type { FastifyPluginAsync } from 'fastify';
 
 const routes: FastifyPluginAsync = async (server) => {
   server.put<GetMemberRequest>(
@@ -17,7 +17,7 @@ const routes: FastifyPluginAsync = async (server) => {
     {
       onRequest: [
         server.authenticate,
-        (request, reply, done) => addPermissions(server, request, done),
+        (request, _reply, done) => addPermissions(server, request, done),
       ],
       schema: {
         description:
@@ -107,7 +107,8 @@ const routes: FastifyPluginAsync = async (server) => {
               return reply.code(202).send({
                 message: 'The change has been made correctly',
               });
-            } else if (err) {
+            }
+            if (err) {
               return reply.code(503).send();
             }
           },

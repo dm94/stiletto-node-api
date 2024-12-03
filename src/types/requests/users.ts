@@ -1,4 +1,4 @@
-import { RequestGenericInterface } from 'fastify';
+import type { RequestGenericInterface } from 'fastify';
 
 export interface AddNickRequest extends RequestGenericInterface {
   Querystring: {

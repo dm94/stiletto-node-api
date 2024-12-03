@@ -1,5 +1,5 @@
-import { TypeRelationship } from '@customtypes/relationships';
-import { RequestGenericInterface } from 'fastify/types/request';
+import type { TypeRelationship } from '@customtypes/relationships';
+import type { RequestGenericInterface } from 'fastify/types/request';
 
 export interface CreateRelationshipRequest extends RequestGenericInterface {
   Querystring: {

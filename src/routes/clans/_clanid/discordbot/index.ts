@@ -1,8 +1,11 @@
-import { DiscordConfig, DiscordConfigSchema, Languages } from '@customtypes/discordconfig';
-import { GetDiscordConfigRequest, UpdateDiscordConfigRequest } from '@customtypes/requests/clans';
+import { type DiscordConfig, DiscordConfigSchema, Languages } from '@customtypes/discordconfig';
+import type {
+  GetDiscordConfigRequest,
+  UpdateDiscordConfigRequest,
+} from '@customtypes/requests/clans';
 import { Permission } from '@customtypes/permissions';
 import { Type } from '@sinclair/typebox';
-import { FastifyPluginAsync } from 'fastify';
+import type { FastifyPluginAsync } from 'fastify';
 import { addPermissions } from '@services/permission';
 import {
   Error400Default,
@@ -55,7 +58,7 @@ const routes: FastifyPluginAsync = async (server) => {
             'select serverdiscordid, botlanguaje, readclanlog, automatickick, setnotreadypvp, walkeralarm from botconfigs where serverdiscordid=?',
             request.dbuser.serverdiscord,
             (err, result) => {
-              if (result && result[0]) {
+              if (result?.[0]) {
                 return reply.code(200).send({
                   discordid: result[0].serverdiscordid,
                   botLanguaje: result[0].botlanguaje,
@@ -64,11 +67,11 @@ const routes: FastifyPluginAsync = async (server) => {
                   setNotReadyPVP: result[0].setnotreadypvp,
                   walkerAlarm: result[0].walkeralarm,
                 });
-              } else if (err) {
-                return reply.code(503).send();
-              } else {
-                return reply.code(404).send();
               }
+              if (err) {
+                return reply.code(503).send();
+              }
+              return reply.code(404).send();
             },
           );
         } else {
@@ -85,7 +88,7 @@ const routes: FastifyPluginAsync = async (server) => {
     {
       onRequest: [
         server.authenticate,
-        (request, reply, done) => addPermissions(server, request, done),
+        (request, _reply, done) => addPermissions(server, request, done),
       ],
       schema: {
         description: ' Update the bot Config',
@@ -184,7 +187,8 @@ const routes: FastifyPluginAsync = async (server) => {
                 return reply.code(200).send({
                   message: 'Config updated',
                 });
-              } else if (err) {
+              }
+              if (err) {
                 return reply.code(503).send();
               }
             },

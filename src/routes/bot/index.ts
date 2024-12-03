@@ -4,17 +4,17 @@ import {
   Error404Default,
   Error503Default,
 } from '@customtypes/errors';
-import { CreateTradefromBotRequest, GetWhoHasLearnRequest } from '@customtypes/requests/bot';
+import type { CreateTradefromBotRequest, GetWhoHasLearnRequest } from '@customtypes/requests/bot';
 import {
-  TechTreeInfo,
+  type TechTreeInfo,
   TechTreeSchema,
-  TechUserInfo,
+  type TechUserInfo,
   TechUserSchema,
   Tree,
 } from '@customtypes/techtree';
 import { TradeType } from '@customtypes/trades';
 import { Type } from '@sinclair/typebox';
-import { FastifyPluginAsync } from 'fastify';
+import type { FastifyPluginAsync } from 'fastify';
 
 const routes: FastifyPluginAsync = async (server) => {
   server.get<GetWhoHasLearnRequest, { Reply: TechUserInfo[] }>(
@@ -161,7 +161,7 @@ const routes: FastifyPluginAsync = async (server) => {
           'select discordTag from users where discordID=?',
           [request.params.discordid],
           (e, rows) => {
-            if (rows && rows[0] && rows[0].discordTag) {
+            if (rows?.[0]?.discordTag) {
               const discordtag = rows[0].discordTag;
 
               const techCollection = server.mongo.client.db('lastoasis').collection('tech');
@@ -175,9 +175,8 @@ const routes: FastifyPluginAsync = async (server) => {
                   techCollection.findOne({ discordtag: discordtag }).then((techTree) => {
                     if (techTree) {
                       return reply.code(200).send(techTree);
-                    } else {
-                      return reply.code(201).send();
                     }
+                    return reply.code(201).send();
                   });
                 });
             } else if (e) {

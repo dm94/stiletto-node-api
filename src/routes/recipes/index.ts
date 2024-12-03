@@ -1,6 +1,6 @@
-import { FastifyPluginAsync } from 'fastify';
-import { AddRecipeRequest, GetRecipeRequest } from '@customtypes/requests/recipes';
-import { RecipeListInfo, RecipeListSchema } from '@customtypes/recipes';
+import type { FastifyPluginAsync } from 'fastify';
+import type { AddRecipeRequest, GetRecipeRequest } from '@customtypes/requests/recipes';
+import { type RecipeListInfo, RecipeListSchema } from '@customtypes/recipes';
 import { Error400Default, Error404Default, Error503Default } from '@customtypes/errors';
 
 const routes: FastifyPluginAsync = async (server) => {
@@ -40,17 +40,16 @@ const routes: FastifyPluginAsync = async (server) => {
             token: search._id.toString(),
             items: JSON.parse(search.recipe),
           });
-        } else {
-          const date = new Date().toISOString().split('T')[0];
-          const result = await recipesCollection.insertOne({
-            recipe: request.query.items,
-            creation_date: date,
-          });
-          return reply.code(201).send({
-            token: result.insertedId.toString(),
-            items: JSON.parse(request.query.items),
-          });
         }
+        const date = new Date().toISOString().split('T')[0];
+        const result = await recipesCollection.insertOne({
+          recipe: request.query.items,
+          creation_date: date,
+        });
+        return reply.code(201).send({
+          token: result.insertedId.toString(),
+          items: JSON.parse(request.query.items),
+        });
       } catch (err) {
         console.log(err);
         return reply.code(503).send();
@@ -94,9 +93,8 @@ const routes: FastifyPluginAsync = async (server) => {
             token: request.params.recipetoken,
             items: JSON.parse(recipe.recipe),
           });
-        } else {
-          return reply.code(404).send();
         }
+        return reply.code(404).send();
       } catch (err) {
         console.log(err);
         return reply.code(503).send();

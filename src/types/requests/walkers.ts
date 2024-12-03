@@ -1,5 +1,5 @@
-import { WalkerType, WalkerUse } from '@customtypes/walkers';
-import { RequestGenericInterface } from 'fastify/types/request';
+import type { WalkerType, WalkerUse } from '@customtypes/walkers';
+import type { RequestGenericInterface } from 'fastify/types/request';
 
 export interface GetWalkersRequest extends RequestGenericInterface {
   Querystring: {

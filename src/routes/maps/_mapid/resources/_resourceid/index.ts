@@ -1,7 +1,7 @@
 import { Error400Default, Error503Default } from '@customtypes/errors';
-import { DeleteResourceRequest, EditResourceRequest } from '@customtypes/requests/maps';
+import type { DeleteResourceRequest, EditResourceRequest } from '@customtypes/requests/maps';
 import { Type } from '@sinclair/typebox';
-import { FastifyPluginAsync } from 'fastify';
+import type { FastifyPluginAsync } from 'fastify';
 
 const routes: FastifyPluginAsync = async (server) => {
   server.put<EditResourceRequest>(
@@ -63,7 +63,8 @@ const routes: FastifyPluginAsync = async (server) => {
               return reply.code(202).send({
                 message: 'Edited resource',
               });
-            } else if (err) {
+            }
+            if (err) {
               return reply.code(503).send();
             }
           },
@@ -77,7 +78,8 @@ const routes: FastifyPluginAsync = async (server) => {
               return reply.code(202).send({
                 message: 'Edited resource',
               });
-            } else if (err) {
+            }
+            if (err) {
               return reply.code(503).send();
             }
           },
@@ -130,7 +132,8 @@ const routes: FastifyPluginAsync = async (server) => {
         (err, result) => {
           if (result) {
             return reply.code(204).send();
-          } else if (err) {
+          }
+          if (err) {
             return reply.code(503).send();
           }
         },

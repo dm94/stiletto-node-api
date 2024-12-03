@@ -1,7 +1,7 @@
-import { FastifyPluginAsync } from 'fastify';
-import { TradeInfo, TradeSchema, TradeType } from '@customtypes/trades';
+import type { FastifyPluginAsync } from 'fastify';
+import { type TradeInfo, TradeSchema, TradeType } from '@customtypes/trades';
 import { Type } from '@sinclair/typebox';
-import {
+import type {
   DeleteTradeRequest,
   CreateTradeRequest,
   GetTradesRequest,

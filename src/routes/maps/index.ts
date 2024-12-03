@@ -4,10 +4,10 @@ import {
   Error404Default,
   Error503Default,
 } from '@customtypes/errors';
-import { MapInfo, MapSchema } from '@customtypes/maps';
-import { AddMapRequest } from '@customtypes/requests/maps';
+import { type MapInfo, MapSchema } from '@customtypes/maps';
+import type { AddMapRequest } from '@customtypes/requests/maps';
 import { Type } from '@sinclair/typebox';
-import { FastifyPluginAsync } from 'fastify';
+import type { FastifyPluginAsync } from 'fastify';
 
 const routes: FastifyPluginAsync = async (server) => {
   server.get<{ Reply: MapInfo[] }>(
@@ -45,11 +45,11 @@ const routes: FastifyPluginAsync = async (server) => {
           (err, result) => {
             if (result) {
               return reply.code(200).send(result as MapInfo[]);
-            } else if (err) {
-              return reply.code(503).send();
-            } else {
-              return reply.code(404).send();
             }
+            if (err) {
+              return reply.code(503).send();
+            }
+            return reply.code(404).send();
           },
         );
       } else {
@@ -59,11 +59,11 @@ const routes: FastifyPluginAsync = async (server) => {
           (err, result) => {
             if (result) {
               return reply.code(200).send(result as MapInfo[]);
-            } else if (err) {
-              return reply.code(503).send();
-            } else {
-              return reply.code(404).send();
             }
+            if (err) {
+              return reply.code(503).send();
+            }
+            return reply.code(404).send();
           },
         );
       }
@@ -136,13 +136,14 @@ const routes: FastifyPluginAsync = async (server) => {
           'insert into clanmaps(typemap,discordid,name,dateofburning,pass,allowedit) values(?, ?, ?, ?, ?,1)',
           [mapType, request.dbuser.discordid, mapName, mapDate, randomPassword],
           (err, result) => {
-            if (result && result?.insertId) {
+            if (result?.insertId) {
               return reply.code(201).send({
                 Success: 'Map created',
                 IdMap: result.insertId,
                 PassMap: randomPassword,
               });
-            } else if (err) {
+            }
+            if (err) {
               return reply.code(503).send();
             }
           },
@@ -152,13 +153,14 @@ const routes: FastifyPluginAsync = async (server) => {
           'insert into clanmaps(typemap,discordid,name,dateofburning,pass,allowedit) values(?,"437020812168396820", ?, ?, ?,1)',
           [mapType, mapName, mapDate, randomPassword],
           (err, result) => {
-            if (result && result?.insertId) {
+            if (result?.insertId) {
               return reply.code(201).send({
                 Success: 'Map created',
                 IdMap: result.insertId,
                 PassMap: randomPassword,
               });
-            } else if (err) {
+            }
+            if (err) {
               return reply.code(503).send();
             }
           },

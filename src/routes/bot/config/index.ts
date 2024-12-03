@@ -1,13 +1,20 @@
-import { DiscordConfigBot, DiscordConfigBotSchema, Languages } from '@customtypes/discordconfig';
+import {
+  type DiscordConfigBot,
+  DiscordConfigBotSchema,
+  Languages,
+} from '@customtypes/discordconfig';
 import {
   Error400Default,
   Error401Default,
   Error404Default,
   Error503Default,
 } from '@customtypes/errors';
-import { GetDiscordServerRequest, UpdateBotConfigByServerRequest } from '@customtypes/requests/bot';
+import type {
+  GetDiscordServerRequest,
+  UpdateBotConfigByServerRequest,
+} from '@customtypes/requests/bot';
 import { Type } from '@sinclair/typebox';
-import { FastifyPluginAsync } from 'fastify';
+import type { FastifyPluginAsync } from 'fastify';
 
 const routes: FastifyPluginAsync = async (server) => {
   server.get<{ Reply: DiscordConfigBot[] }>(
@@ -31,7 +38,7 @@ const routes: FastifyPluginAsync = async (server) => {
         },
       },
     },
-    (request, reply) => {
+    (_request, reply) => {
       server.mysql.query(
         'select serverdiscordid, botlanguaje, readclanlog, automatickick, setnotreadypvp, walkeralarm from botconfigs',
         (err, result: DiscordConfigBot[]) => {
@@ -85,13 +92,13 @@ const routes: FastifyPluginAsync = async (server) => {
         'select serverdiscordid, botlanguaje, readclanlog, automatickick, setnotreadypvp, walkeralarm from botconfigs where serverdiscordid=?',
         [serverDiscordId],
         (err, result) => {
-          if (result && result[0]) {
+          if (result?.[0]) {
             return reply.code(200).send(result[0]);
-          } else if (err) {
-            return reply.code(503).send();
-          } else {
-            return reply.code(404).send();
           }
+          if (err) {
+            return reply.code(503).send();
+          }
+          return reply.code(404).send();
         },
       );
     },

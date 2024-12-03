@@ -1,5 +1,5 @@
-import { TradeType } from '@customtypes/trades';
-import { RequestGenericInterface } from 'fastify';
+import type { TradeType } from '@customtypes/trades';
+import type { RequestGenericInterface } from 'fastify';
 
 export interface CreateTradeRequest extends RequestGenericInterface {
   Querystring: {

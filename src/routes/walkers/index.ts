@@ -1,7 +1,7 @@
-import { FastifyPluginAsync } from 'fastify';
+import type { FastifyPluginAsync } from 'fastify';
 import { Type } from '@sinclair/typebox';
-import { WalkerInfo, WalkerSchema, WalkerType, WalkerUse } from '@customtypes/walkers';
-import { GetWalkersRequest } from '@customtypes/requests/walkers';
+import { type WalkerInfo, WalkerSchema, WalkerType, WalkerUse } from '@customtypes/walkers';
+import type { GetWalkersRequest } from '@customtypes/requests/walkers';
 import { Error401Default, Error405Default, Error503Default } from '@customtypes/errors';
 
 const routes: FastifyPluginAsync = async (server) => {

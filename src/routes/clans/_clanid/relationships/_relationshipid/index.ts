@@ -5,10 +5,10 @@ import {
   Error503Default,
 } from '@customtypes/errors';
 import { Permission } from '@customtypes/permissions';
-import { DeleteRelationshipRequest } from '@customtypes/requests/relationships';
+import type { DeleteRelationshipRequest } from '@customtypes/requests/relationships';
 import { addPermissions } from '@services/permission';
 import { Type } from '@sinclair/typebox';
-import { FastifyPluginAsync } from 'fastify';
+import type { FastifyPluginAsync } from 'fastify';
 
 const routes: FastifyPluginAsync = async (server) => {
   server.delete<DeleteRelationshipRequest>(
@@ -16,7 +16,7 @@ const routes: FastifyPluginAsync = async (server) => {
     {
       onRequest: [
         server.authenticate,
-        (request, reply, done) => addPermissions(server, request, done),
+        (request, _reply, done) => addPermissions(server, request, done),
       ],
       schema: {
         description:
@@ -79,11 +79,11 @@ const routes: FastifyPluginAsync = async (server) => {
         (err, result) => {
           if (result) {
             return reply.code(204).send();
-          } else if (err) {
-            return reply.code(503).send();
-          } else {
-            return reply.code(405).send();
           }
+          if (err) {
+            return reply.code(503).send();
+          }
+          return reply.code(405).send();
         },
       );
     },

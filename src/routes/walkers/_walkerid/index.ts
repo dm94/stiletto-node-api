@@ -1,7 +1,7 @@
-import { FastifyPluginAsync } from 'fastify';
+import type { FastifyPluginAsync } from 'fastify';
 import { Type } from '@sinclair/typebox';
 import { WalkerUse } from '@customtypes/walkers';
-import { DeleteWalkersRequest, EditWalkersRequest } from '@customtypes/requests/walkers';
+import type { DeleteWalkersRequest, EditWalkersRequest } from '@customtypes/requests/walkers';
 import { Permission } from '@customtypes/permissions';
 import { addPermissions } from '@services/permission';
 import {
@@ -17,7 +17,7 @@ const routes: FastifyPluginAsync = async (server) => {
     {
       onRequest: [
         server.authenticate,
-        (request, reply, done) => addPermissions(server, request, done),
+        (request, _reply, done) => addPermissions(server, request, done),
       ],
       schema: {
         description:
@@ -102,7 +102,7 @@ const routes: FastifyPluginAsync = async (server) => {
 
       if (
         request?.dbuser.discordid === request?.dbuser.leaderid ||
-        (request?.clanPermissions && request.clanPermissions[Permission.WALKERS])
+        request?.clanPermissions?.[Permission.WALKERS]
       ) {
         server.mysql.query(
           'update walkers set ownerUser=?, walker_use=?, type=?, description=?, isReady=? where walkerID=?',
@@ -150,7 +150,7 @@ const routes: FastifyPluginAsync = async (server) => {
     {
       onRequest: [
         server.authenticate,
-        (request, reply, done) => addPermissions(server, request, done),
+        (request, _reply, done) => addPermissions(server, request, done),
       ],
       schema: {
         description: 'Delete the walker',
@@ -190,7 +190,7 @@ const routes: FastifyPluginAsync = async (server) => {
 
       if (
         request?.dbuser.discordid === request?.dbuser.leaderid ||
-        (request?.clanPermissions && request.clanPermissions[Permission.WALKERS])
+        request?.clanPermissions?.[Permission.WALKERS]
       ) {
         server.mysql.query(
           'delete from walkers where walkerID=? and discorid=?',

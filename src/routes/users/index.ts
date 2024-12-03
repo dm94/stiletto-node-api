@@ -1,8 +1,8 @@
-import { FastifyPluginAsync } from 'fastify';
-import { UserInfo, UserSchema } from '@customtypes/user';
+import type { FastifyPluginAsync } from 'fastify';
+import { type UserInfo, UserSchema } from '@customtypes/user';
 import { Type } from '@sinclair/typebox';
 import { sendDiscordMessage } from '@services/DiscordWebhook';
-import { AddNickRequest } from '@customtypes/requests/users';
+import type { AddNickRequest } from '@customtypes/requests/users';
 import { Error400Default, Error401Default, Error503Default } from '@customtypes/errors';
 
 const routes: FastifyPluginAsync = async (server) => {
@@ -30,10 +30,9 @@ const routes: FastifyPluginAsync = async (server) => {
     (request, reply) => {
       if (request.dbuser?.discordid) {
         return reply.code(200).send(request.dbuser as UserInfo);
-      } else {
-        reply.code(401);
-        return new Error('Invalid token JWT');
       }
+      reply.code(401);
+      return new Error('Invalid token JWT');
     },
   );
   server.put<AddNickRequest, { Reply }>(
@@ -131,10 +130,9 @@ const routes: FastifyPluginAsync = async (server) => {
         );
 
         return reply.code(204).send();
-      } else {
-        reply.code(401);
-        return new Error('Invalid token JWT');
       }
+      reply.code(401);
+      return new Error('Invalid token JWT');
     },
   );
 };

@@ -1,13 +1,13 @@
-import { ClanInfo, ClanSchema } from '@customtypes/clans';
+import { type ClanInfo, ClanSchema } from '@customtypes/clans';
 import {
   Error400Default,
   Error401Default,
   Error405Default,
   Error503Default,
 } from '@customtypes/errors';
-import { CreateClanRequest, GetClansRequest } from '@customtypes/requests/clans';
+import type { CreateClanRequest, GetClansRequest } from '@customtypes/requests/clans';
 import { Type } from '@sinclair/typebox';
-import { FastifyPluginAsync } from 'fastify';
+import type { FastifyPluginAsync } from 'fastify';
 
 const routes: FastifyPluginAsync = async (server) => {
   server.get<GetClansRequest, { Reply: ClanInfo[] }>(
@@ -193,7 +193,7 @@ const routes: FastifyPluginAsync = async (server) => {
               'select clanid from clans where leaderid=?',
               [request.dbuser.discordid],
               (erro, result1) => {
-                if (result1 && result1[0]?.clanid) {
+                if (result1?.[0]?.clanid) {
                   const clanId = result1[0].clanid;
                   server.mysql.query(
                     'update users set clanid=? where discordID=?',
@@ -203,7 +203,8 @@ const routes: FastifyPluginAsync = async (server) => {
                         return reply.code(201).send({
                           message: 'Clan created',
                         });
-                      } else if (error) {
+                      }
+                      if (error) {
                         return reply.code(503).send();
                       }
                     },

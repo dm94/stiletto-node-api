@@ -48,7 +48,7 @@ const configPlugin: FastifyPluginAsync = async (server) => {
   const validate = ajv.compile(ConfigSchema);
   const valid = validate(process.env);
   if (!valid) {
-    throw new Error('.env file validation failed - ' + JSON.stringify(validate.errors, null, 2));
+    throw new Error(`.env file validation failed - ${JSON.stringify(validate.errors, null, 2)}`);
   }
   server.decorate('config', process.env);
 };

@@ -1,12 +1,12 @@
-import { Permission } from '@customtypes/permissions';
+import type { Permission } from '@customtypes/permissions';
 
 export const addPermissions = (server, req, done) => {
   if (req.dbuser.clanid && req.dbuser.discordid) {
     server.mysql.query(
       'select clanid, discordID, request, kickmembers, walkers, bot, diplomacy from clanpermissions where clanid=? and discordID=?',
       [req.dbuser.clanid, req.dbuser.discordid],
-      (err, result) => {
-        if (result && result[0]) {
+      (_err, result) => {
+        if (result?.[0]) {
           req.clanPermissions = {
             clanid: result[0].clanid,
             discordid: result[0].discordID,
@@ -31,7 +31,7 @@ export const hasPermissions = (server, memberId, permission: Permission) => {
       'select users.discordID, users.clanid clanid, clans.leaderid from users, clans where users.clanid=clans.clanid and users.discordID=?',
       [memberId],
       (e, r) => {
-        if (r && r[0]) {
+        if (r?.[0]) {
           const clanId = r[0].clanid;
           const leaderId = r[0].leaderid;
 
@@ -44,13 +44,13 @@ export const hasPermissions = (server, memberId, permission: Permission) => {
               'select clanid, discordID, request, kickmembers, walkers, bot, diplomacy from clanpermissions where clanid=? and discordID=?',
               [clanId, memberId],
               (err, result) => {
-                if (result && result[0]) {
+                if (result?.[0]) {
                   return result[0][permission];
-                } else if (err) {
-                  return false;
-                } else {
+                }
+                if (err) {
                   return false;
                 }
+                return false;
               },
             );
           } else {

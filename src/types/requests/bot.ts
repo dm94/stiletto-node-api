@@ -1,7 +1,7 @@
-import { Languages } from '@customtypes/discordconfig';
-import { TradeType } from '@customtypes/trades';
-import { WalkerType, WalkerUse } from '@customtypes/walkers';
-import { RequestGenericInterface } from 'fastify/types/request';
+import type { Languages } from '@customtypes/discordconfig';
+import type { TradeType } from '@customtypes/trades';
+import type { WalkerType, WalkerUse } from '@customtypes/walkers';
+import type { RequestGenericInterface } from 'fastify/types/request';
 
 export interface GetDiscordServerRequest extends RequestGenericInterface {
   Params: {

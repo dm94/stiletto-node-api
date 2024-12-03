@@ -1,12 +1,12 @@
 import { Error400Default, Error401Default, Error503Default } from '@customtypes/errors';
-import {
+import type {
   AddWalkerRequest,
   BotEditWalkerRequest,
   GetWalkersByServerRequest,
 } from '@customtypes/requests/bot';
-import { WalkerInfo, WalkerSchema, WalkerUse, WalkerType } from '@customtypes/walkers';
+import { type WalkerInfo, WalkerSchema, WalkerUse, WalkerType } from '@customtypes/walkers';
 import { Type } from '@sinclair/typebox';
-import { FastifyPluginAsync } from 'fastify';
+import type { FastifyPluginAsync } from 'fastify';
 
 const routes: FastifyPluginAsync = async (server) => {
   server.get<GetWalkersByServerRequest, { Reply: WalkerInfo[] }>(
@@ -155,7 +155,8 @@ const routes: FastifyPluginAsync = async (server) => {
         console.log('result', result);
         if (result) {
           return reply.code(200).send(result as WalkerInfo[]);
-        } else if (err) {
+        }
+        if (err) {
           console.log('err', err);
           return reply.code(503).send();
         }
@@ -225,7 +226,7 @@ const routes: FastifyPluginAsync = async (server) => {
         'select * from walkers where name=? and discorid=?',
         [name, discordid],
         (err, result) => {
-          if (result && result[0]) {
+          if (result?.[0]) {
             server.mysql.query(
               'update walkers set datelastuse=?, lastUser=?, walkerID=? where name=? and discorid=?',
               [date, lastuser, walkerid, name, discordid],

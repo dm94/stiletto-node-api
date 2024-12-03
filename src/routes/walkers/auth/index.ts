@@ -1,6 +1,6 @@
-import { FastifyPluginAsync } from 'fastify';
+import type { FastifyPluginAsync } from 'fastify';
 import { Type } from '@sinclair/typebox';
-import { GetDiscordServersRequest } from '@customtypes/requests/walkers';
+import type { GetDiscordServersRequest } from '@customtypes/requests/walkers';
 import {
   Error400Default,
   Error401Default,

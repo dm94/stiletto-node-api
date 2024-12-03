@@ -1,6 +1,6 @@
-import { FastifyPluginAsync } from 'fastify';
-import { GetTechRequest } from '@customtypes/requests/users';
-import { TechTreeInfo, TechTreeSchema, Tree } from '@customtypes/techtree';
+import type { FastifyPluginAsync } from 'fastify';
+import type { GetTechRequest } from '@customtypes/requests/users';
+import { type TechTreeInfo, TechTreeSchema, Tree } from '@customtypes/techtree';
 import {
   Error400Default,
   Error401Default,
@@ -64,9 +64,8 @@ const routes: FastifyPluginAsync = async (server) => {
         const techTree = await tech.findOne({ discordtag: request.dbuser.discordtag });
         if (techTree) {
           return reply.code(200).send(techTree);
-        } else {
-          return reply.code(404).send();
         }
+        return reply.code(404).send();
       } catch (err) {
         console.log(err);
         return reply.code(503).send();
@@ -139,9 +138,8 @@ const routes: FastifyPluginAsync = async (server) => {
         const techTree = await tech.findOne({ discordtag: request.dbuser.discordtag });
         if (techTree) {
           return reply.code(200).send(techTree);
-        } else {
-          return reply.code(201).send();
         }
+        return reply.code(201).send();
       } catch (err) {
         console.log(err);
         return reply.code(503).send();

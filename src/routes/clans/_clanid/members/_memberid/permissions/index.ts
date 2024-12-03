@@ -4,13 +4,13 @@ import {
   Error404Default,
   Error503Default,
 } from '@customtypes/errors';
-import { Permissions, PermissionsSchema } from '@customtypes/permissions';
-import {
+import { type Permissions, PermissionsSchema } from '@customtypes/permissions';
+import type {
   GetMemberPermissionsRequest,
   UpdateMemberPermissionsRequest,
 } from '@customtypes/requests/members';
 import { Type } from '@sinclair/typebox';
-import { FastifyPluginAsync } from 'fastify';
+import type { FastifyPluginAsync } from 'fastify';
 
 const routes: FastifyPluginAsync = async (server) => {
   server.get<GetMemberPermissionsRequest, { Reply: Permissions }>(
@@ -72,7 +72,7 @@ const routes: FastifyPluginAsync = async (server) => {
         'select clanid, discordID, request, kickmembers, walkers, bot, diplomacy from clanpermissions where clanid=? and discordID=?',
         [request.dbuser.clanid, memberId],
         (err, result) => {
-          if (result && result[0]) {
+          if (result?.[0]) {
             return reply.code(200).send({
               clanid: result[0].clanid,
               discordid: result[0].discordID,
@@ -82,11 +82,13 @@ const routes: FastifyPluginAsync = async (server) => {
               bot: Boolean(result[0].bot),
               diplomacy: Boolean(result[0].diplomacy),
             });
-          } else if (err) {
-            return reply.code(503).send();
-          } else {
-            return reply.code(404).send();
           }
+
+          if (err) {
+            return reply.code(503).send();
+          }
+
+          return reply.code(404).send();
         },
       );
     },
@@ -191,7 +193,8 @@ const routes: FastifyPluginAsync = async (server) => {
             return reply.code(200).send({
               message: 'The change has been made correctly',
             });
-          } else if (err) {
+          }
+          if (err) {
             return reply.code(503).send();
           }
         },

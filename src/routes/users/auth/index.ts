@@ -1,8 +1,8 @@
-import { FastifyPluginAsync } from 'fastify';
-import { LoginInfo, LoginSchema } from '@customtypes/user';
+import type { FastifyPluginAsync } from 'fastify';
+import { type LoginInfo, LoginSchema } from '@customtypes/user';
 import { Error503Default } from '@customtypes/errors';
 import { getAccessToken, getUser } from '@services/DiscordAPI';
-import { AuthRequest } from '@customtypes/requests/users';
+import type { AuthRequest } from '@customtypes/requests/users';
 
 const routes: FastifyPluginAsync = async (server) => {
   server.post<AuthRequest, { Reply: LoginInfo }>(
@@ -32,7 +32,7 @@ const routes: FastifyPluginAsync = async (server) => {
     async (request, reply) => {
       const accessToken = await getAccessToken(request.query.code);
 
-      if (accessToken && accessToken.access_token) {
+      if (accessToken?.access_token) {
         const user = await getUser(accessToken.access_token);
 
         if (user) {
@@ -74,15 +74,12 @@ const routes: FastifyPluginAsync = async (server) => {
               discordid: discordId,
               token: token,
             });
-          } else {
-            return reply.code(400).send();
           }
-        } else {
           return reply.code(400).send();
         }
-      } else {
-        return reply.code(500).send();
+        return reply.code(400).send();
       }
+      return reply.code(500).send();
     },
   );
 };

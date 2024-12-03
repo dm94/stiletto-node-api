@@ -6,10 +6,10 @@ import {
 } from '@customtypes/errors';
 import { RequestActions } from '@customtypes/member-request';
 import { Permission } from '@customtypes/permissions';
-import { UpdateClanRequest } from '@customtypes/requests/requests';
+import type { UpdateClanRequest } from '@customtypes/requests/requests';
 import { addPermissions } from '@services/permission';
 import { Type } from '@sinclair/typebox';
-import { FastifyPluginAsync } from 'fastify';
+import type { FastifyPluginAsync } from 'fastify';
 
 const routes: FastifyPluginAsync = async (server) => {
   server.put<UpdateClanRequest>(
@@ -17,7 +17,7 @@ const routes: FastifyPluginAsync = async (server) => {
     {
       onRequest: [
         server.authenticate,
-        (request, reply, done) => addPermissions(server, request, done),
+        (request, _reply, done) => addPermissions(server, request, done),
       ],
       schema: {
         description: 'It serves to accept or reject an application for entry into a clan',
@@ -91,7 +91,7 @@ const routes: FastifyPluginAsync = async (server) => {
         'select * from clanrequest where clanid=? and discordID=?',
         [clanId, request.params.requestid],
         (err, result) => {
-          if (result && result[0]) {
+          if (result?.[0]) {
             if (action === RequestActions.ACCEPT) {
               server.mysql.query(
                 'update users set clanid=? where discordID=?',
@@ -114,7 +114,8 @@ const routes: FastifyPluginAsync = async (server) => {
               return reply.code(202).send({
                 message: 'The request has been processed correctly',
               });
-            } else if (action === RequestActions.REJECT) {
+            }
+            if (action === RequestActions.REJECT) {
               server.mysql.query(
                 'delete from clanrequest where clanid=? and discordID=?',
                 [clanId, request.params.requestid],
@@ -123,7 +124,8 @@ const routes: FastifyPluginAsync = async (server) => {
                     return reply.code(202).send({
                       message: 'The request has been processed correctly',
                     });
-                  } else if (err) {
+                  }
+                  if (err) {
                     return reply.code(503).send();
                   }
                 },

@@ -1,7 +1,7 @@
-import { ClusterInfo, ClusterSchema } from '@customtypes/clusters';
+import { type ClusterInfo, ClusterSchema } from '@customtypes/clusters';
 import { Error503Default } from '@customtypes/errors';
 import { Type } from '@sinclair/typebox';
-import { FastifyPluginAsync } from 'fastify';
+import type { FastifyPluginAsync } from 'fastify';
 
 const routes: FastifyPluginAsync = async (server) => {
   server.get<{ Reply: ClusterInfo[] }>(
@@ -18,7 +18,7 @@ const routes: FastifyPluginAsync = async (server) => {
         },
       },
     },
-    (request, reply) => {
+    (_request, reply) => {
       server.mysql.query(
         'select region, name, clan_limit, crossplay from clusters order by region, name, clan_limit',
         (err, result: ClusterInfo[]) => {

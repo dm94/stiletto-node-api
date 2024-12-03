@@ -5,17 +5,17 @@ import {
   Error405Default,
   Error503Default,
 } from '@customtypes/errors';
-import { AddResourceRequest, GetMapRequest } from '@customtypes/requests/maps';
-import { ResourceInfo, ResourceSchema } from '@customtypes/resource';
+import type { AddResourceRequest, GetMapRequest } from '@customtypes/requests/maps';
+import { type ResourceInfo, ResourceSchema } from '@customtypes/resource';
 import { addMapInfo } from '@services/mapinfo';
 import { Type } from '@sinclair/typebox';
-import { FastifyPluginAsync } from 'fastify';
+import type { FastifyPluginAsync } from 'fastify';
 
 const routes: FastifyPluginAsync = async (server) => {
   server.get<GetMapRequest, { Reply: ResourceInfo[] }>(
     '/',
     {
-      onRequest: [(request, reply, done) => addMapInfo(server, request, done)],
+      onRequest: [(request, _reply, done) => addMapInfo(server, request, done)],
       schema: {
         description: 'Return all resources for that map',
         summary: 'getResources',
@@ -64,11 +64,11 @@ const routes: FastifyPluginAsync = async (server) => {
           (err, result) => {
             if (result) {
               return reply.code(200).send(result as ResourceInfo[]);
-            } else if (err) {
-              return reply.code(503).send();
-            } else {
-              return reply.code(404).send();
             }
+            if (err) {
+              return reply.code(503).send();
+            }
+            return reply.code(404).send();
           },
         );
       } else {
@@ -78,11 +78,11 @@ const routes: FastifyPluginAsync = async (server) => {
           (err, result) => {
             if (result) {
               return reply.code(200).send(result as ResourceInfo[]);
-            } else if (err) {
-              return reply.code(503).send();
-            } else {
-              return reply.code(404).send();
             }
+            if (err) {
+              return reply.code(503).send();
+            }
+            return reply.code(404).send();
           },
         );
       }
@@ -91,7 +91,7 @@ const routes: FastifyPluginAsync = async (server) => {
   server.post<AddResourceRequest>(
     '/',
     {
-      onRequest: [(request, reply, done) => addMapInfo(server, request, done)],
+      onRequest: [(request, _reply, done) => addMapInfo(server, request, done)],
       schema: {
         description: 'To create a new resource in the map',
         summary: 'addResourceMap',
@@ -187,7 +187,8 @@ const routes: FastifyPluginAsync = async (server) => {
             return reply.code(201).send({
               message: 'Added resource',
             });
-          } else if (err) {
+          }
+          if (err) {
             return reply.code(503).send();
           }
         },

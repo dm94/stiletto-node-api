@@ -9,8 +9,8 @@ import swaggerUi from '@fastify/swagger-ui';
 import mysql from '@fastify/mysql';
 import mongodb from '@fastify/mongodb';
 import { schema } from './utils/swagger';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -32,7 +32,7 @@ await server.register(cors, {
   methods: ['POST', 'GET', 'PUT', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
-  origin: ["https://stiletto.deeme.dev", /\.deeme\.dev$/],
+  origin: ['https://stiletto.deeme.dev', /\.deeme\.dev$/],
 });
 
 if (process.env.MYSQL_CONNECTION) {
@@ -52,10 +52,10 @@ await server.register(jwt, {
   secret: process.env.JWT_SECRET ?? 'supersecret',
 });
 
-server.decorate('authenticate', async function (request, reply) {
+server.decorate('authenticate', async (request, reply) => {
   try {
     await request.jwtVerify();
-  } catch (err) {
+  } catch (_err) {
     reply.code(401);
     return new Error('Invalid token JWT');
   }
@@ -70,7 +70,7 @@ server.decorate('botAuth', (request, reply, done) => {
 
 server.decorateRequest('clanPermissions', undefined);
 server.decorateRequest('dbuser', undefined);
-server.addHook('onRequest', (req, reply, done) => {
+server.addHook('onRequest', (req, _reply, done) => {
   let bearer = req.headers.authorization;
   bearer = bearer?.replace('Bearer', '').trim();
   if (bearer) {
@@ -78,7 +78,7 @@ server.addHook('onRequest', (req, reply, done) => {
       'select users.nickname, users.discordtag, users.discordID discordid, users.clanid, clans.name clanname, clans.leaderid, clans.discordid serverdiscord from users left join clans on users.clanid=clans.clanid where users.token=?',
       bearer,
       (err, result) => {
-        if (result && result[0]) {
+        if (result?.[0]) {
           req.dbuser = {
             nickname: result[0].nickname ?? undefined,
             discordtag: result[0].discordtag,
@@ -115,7 +115,7 @@ server.setNotFoundHandler(
       timeWindow: 500,
     }),
   },
-  function (request, reply) {
+  (_request, reply) => {
     reply.code(404).send({ error: '404' });
   },
 );

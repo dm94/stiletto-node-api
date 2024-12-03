@@ -1,6 +1,6 @@
-import { FastifyPluginAsync } from 'fastify';
-import { TechUserInfo, TechUserSchema, Tree } from '@customtypes/techtree';
-import { SeeWhoHasLearntItRequest } from '@customtypes/requests/clans';
+import type { FastifyPluginAsync } from 'fastify';
+import { type TechUserInfo, TechUserSchema, Tree } from '@customtypes/techtree';
+import type { SeeWhoHasLearntItRequest } from '@customtypes/requests/clans';
 import { Type } from '@sinclair/typebox';
 import { Error400Default, Error401Default, Error503Default } from '@customtypes/errors';
 

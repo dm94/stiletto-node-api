@@ -5,12 +5,16 @@ import {
   Error503Default,
 } from '@customtypes/errors';
 import { Permission } from '@customtypes/permissions';
-import { RelationshipInfo, RelationshipSchema, TypeRelationship } from '@customtypes/relationships';
-import { GetClanRequest } from '@customtypes/requests/clans';
-import { CreateRelationshipRequest } from '@customtypes/requests/relationships';
+import {
+  type RelationshipInfo,
+  RelationshipSchema,
+  TypeRelationship,
+} from '@customtypes/relationships';
+import type { GetClanRequest } from '@customtypes/requests/clans';
+import type { CreateRelationshipRequest } from '@customtypes/requests/relationships';
 import { addPermissions } from '@services/permission';
 import { Type } from '@sinclair/typebox';
-import { FastifyPluginAsync } from 'fastify';
+import type { FastifyPluginAsync } from 'fastify';
 
 const routes: FastifyPluginAsync = async (server) => {
   server.get<GetClanRequest, { Reply: RelationshipInfo[] }>(
@@ -76,7 +80,7 @@ const routes: FastifyPluginAsync = async (server) => {
     {
       onRequest: [
         server.authenticate,
-        (request, reply, done) => addPermissions(server, request, done),
+        (request, _reply, done) => addPermissions(server, request, done),
       ],
       schema: {
         description: 'To create new relationships',
@@ -166,11 +170,11 @@ const routes: FastifyPluginAsync = async (server) => {
             return reply.code(201).send({
               message: 'The relationship of diplomacy has been created',
             });
-          } else if (err) {
-            return reply.code(503).send();
-          } else {
-            return reply.code(405).send();
           }
+          if (err) {
+            return reply.code(503).send();
+          }
+          return reply.code(405).send();
         },
       );
     },

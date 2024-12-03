@@ -5,11 +5,11 @@ import {
   Error405Default,
   Error503Default,
 } from '@customtypes/errors';
-import { MemberRequest, MemberRequestSchema } from '@customtypes/member-request';
-import { GetClanRequest } from '@customtypes/requests/clans';
-import { RequestClanRequest } from '@customtypes/requests/requests';
+import { type MemberRequest, MemberRequestSchema } from '@customtypes/member-request';
+import type { GetClanRequest } from '@customtypes/requests/clans';
+import type { RequestClanRequest } from '@customtypes/requests/requests';
 import { Type } from '@sinclair/typebox';
-import { FastifyPluginAsync } from 'fastify';
+import type { FastifyPluginAsync } from 'fastify';
 
 const routes: FastifyPluginAsync = async (server) => {
   server.get<GetClanRequest, { Reply: MemberRequest[] }>(
@@ -63,11 +63,11 @@ const routes: FastifyPluginAsync = async (server) => {
         (err, result) => {
           if (result) {
             return reply.code(200).send(result as MemberRequest[]);
-          } else if (err) {
-            return reply.code(503).send();
-          } else {
-            return reply.code(404).send();
           }
+          if (err) {
+            return reply.code(503).send();
+          }
+          return reply.code(404).send();
         },
       );
     },
@@ -137,7 +137,8 @@ const routes: FastifyPluginAsync = async (server) => {
             return reply.code(201).send({
               message: 'Request sent',
             });
-          } else if (err) {
+          }
+          if (err) {
             return reply.code(503).send();
           }
         },
