@@ -1,6 +1,6 @@
 {
   "name": "stiletto-node-api",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "description": "API for [Stiletto Web](https://github.com/dm94/stiletto-web)",
   "type": "module",
   "scripts": {
@@ -47,15 +47,10 @@
     "fastify-plugin": "^4.5.1"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.9.4",
     "@types/node": "^20.14.1",
-    "@typescript-eslint/eslint-plugin": "^8.17.0",
-    "@typescript-eslint/parser": "^7.12.0",
     "esbuild": "^0.21.4",
-    "eslint": "^8.56.0",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-prettier": "^4.2.1",
     "pino-pretty": "^11.1.0",
-    "prettier": "^3.3.0",
     "tsx": "^4.11.2",
     "typescript": "^5.4.5",
     "vitest": "^2.1.8"
