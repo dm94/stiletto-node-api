@@ -147,7 +147,7 @@ const routes: FastifyPluginAsync = async (server) => {
         name.length > 3 &&
         (!discord || discord.length < 10) &&
         (!color || color.length < 10) &&
-        (!region || region.length < 10) &&
+        (!region || region.length < 20) &&
         (!symbol || symbol.length < 5)
       ) {
         if (region) {
