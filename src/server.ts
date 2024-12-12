@@ -29,7 +29,7 @@ const server = fastify({
 });
 
 await server.register(cors, {
-  methods: ['POST', 'GET', 'PUT', 'OPTIONS'],
+  methods: ['POST', 'GET', 'PUT', 'OPTIONS', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
   origin: ['https://stiletto.deeme.dev', /\.deeme\.dev$/],
