@@ -67,6 +67,12 @@ const routes: FastifyPluginAsync = async (server) => {
         summary: 'updateClan',
         operationId: 'updateClan',
         tags: ['clans'],
+        params: {
+          type: 'object',
+          properties: {
+            clanid: { type: 'integer' },
+          },
+        },
         querystring: {
           type: 'object',
           required: ['clanname'],

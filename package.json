@@ -1,6 +1,6 @@
 {
   "name": "stiletto-node-api",
-  "version": "3.1.1",
+  "version": "3.1.2",
   "description": "API for [Stiletto Web](https://github.com/dm94/stiletto-web)",
   "type": "module",
   "scripts": {
@@ -9,7 +9,6 @@
     "check:types": "tsc --noEmit",
     "build": "esbuild `find src \\( -name '*.ts' \\)` --platform=node --outdir=build --resolve-extensions=.js",
     "build:docker:prod": "docker build . -t my-fastify-app --build-arg APP_ENV=production",
-    "start": "node build",
     "dev": "tsx watch src .env | pino-pretty --colorize",
     "pretest": "npm run build",
     "test": "vitest",
