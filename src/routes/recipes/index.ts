@@ -12,11 +12,19 @@ const routes: FastifyPluginAsync = async (server) => {
         summary: 'addRecipe',
         operationId: 'addRecipe',
         tags: ['recipes'],
-        querystring: {
+        body: {
           type: 'object',
-          required: ['items'],
           properties: {
-            items: { type: 'string' },
+            items: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  name: { type: 'string' },
+                  count: { type: 'integer' },
+                },
+              }
+            },
           },
         },
         response: {
@@ -27,14 +35,14 @@ const routes: FastifyPluginAsync = async (server) => {
       },
     },
     async (request, reply) => {
-      if (!request?.query.items) {
+      if (!request?.body?.items) {
         return reply.code(400).send();
       }
 
       const recipesCollection = server.mongo.client.db('lastoasis').collection('recipes');
 
       try {
-        const search = await recipesCollection.findOne({ recipe: request.query.items });
+        const search = await recipesCollection.findOne({ recipe: request.body.items });
         if (search) {
           return reply.code(201).send({
             token: search._id.toString(),
@@ -43,12 +51,13 @@ const routes: FastifyPluginAsync = async (server) => {
         }
         const date = new Date().toISOString().split('T')[0];
         const result = await recipesCollection.insertOne({
-          recipe: request.query.items,
+          recipe: request.body.items,
           creation_date: date,
         });
+
         return reply.code(201).send({
           token: result.insertedId.toString(),
-          items: JSON.parse(request.query.items),
+          items: request.body.items,
         });
       } catch (err) {
         console.log(err);

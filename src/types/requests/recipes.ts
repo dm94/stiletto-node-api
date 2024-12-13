@@ -6,8 +6,13 @@ export interface GetRecipeRequest extends RequestGenericInterface {
   };
 }
 
+type Recipe = {
+  name: string;
+  count: number;
+};
+
 export interface AddRecipeRequest extends RequestGenericInterface {
-  Querystring: {
-    items: string;
+  Body: {
+    items: Recipe[];
   };
 }
