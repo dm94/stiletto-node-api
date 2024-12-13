@@ -48,7 +48,7 @@ const routes: FastifyPluginAsync = async (server) => {
         if (search) {
           return reply.code(201).send({
             token: search._id.toString(),
-            items: JSON.parse(search.recipe),
+            items: search.recipe,
           });
         }
         const date = new Date().toISOString().split('T')[0];
@@ -102,7 +102,7 @@ const routes: FastifyPluginAsync = async (server) => {
         if (recipe?.recipe) {
           return reply.code(200).send({
             token: request.params.recipetoken,
-            items: JSON.parse(recipe.recipe),
+            items: recipe.recipe,
           });
         }
         return reply.code(404).send();
