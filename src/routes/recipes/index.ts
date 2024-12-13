@@ -14,11 +14,13 @@ const routes: FastifyPluginAsync = async (server) => {
         tags: ['recipes'],
         body: {
           type: 'object',
+          required: ['items'],
           properties: {
             items: {
               type: 'array',
               items: {
                 type: 'object',
+                required: ['name', 'count'],
                 properties: {
                   name: { type: 'string' },
                   count: { type: 'integer' },
