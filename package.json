@@ -29,7 +29,7 @@
   "homepage": "https://github.com/dm94/stiletto-node-api",
   "dependencies": {
     "@fastify/autoload": "^6.0.2",
-    "@fastify/cors": "^10.0.1",
+    "@fastify/cors": "^11.0.0",
     "@fastify/jwt": "^9.0.1",
     "@fastify/mongodb": "^9.0.1",
     "@fastify/mysql": "^5.0.1",
