@@ -8,6 +8,7 @@ export const MapSchema = Type.Object({
   dateofburning: Type.Optional(Type.String()) || Type.Null(),
   pass: Type.Optional(Type.String()) || Type.Null(),
   allowedit: Type.Boolean(),
+  discordTag: Type.Optional(Type.String()),
 });
 
 export type MapInfo = Static<typeof MapSchema>;
