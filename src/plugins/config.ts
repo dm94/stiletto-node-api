@@ -28,10 +28,10 @@ const ConfigSchema = Type.Object({
   API_KEY: Type.String(),
   MYSQL_CONNECTION: Type.Optional(Type.String()),
   MONGODB_CONNECTION: Type.Optional(Type.String()),
-  DISCORD_CLIENT_ID: Type.String(),
-  DISCORD_CLIENT_SECRET: Type.String(),
-  DISCORD_REDIRECT_URL: Type.String(),
-  DISCORD_WEBHOOK: Type.String(),
+  DISCORD_CLIENT_ID: Type.Optional(Type.String()),
+  DISCORD_CLIENT_SECRET: Type.Optional(Type.String()),
+  DISCORD_REDIRECT_URL: Type.Optional(Type.String()),
+  DISCORD_WEBHOOK: Type.Optional(Type.String()),
 });
 
 const ajv = new Ajv({

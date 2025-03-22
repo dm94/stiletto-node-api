@@ -9,7 +9,7 @@ import type {
 import { Error400Default, Error401Default, Error503Default } from '@customtypes/errors';
 
 const routes: FastifyPluginAsync = async (server) => {
-  server.get<GetTradesRequest, { Reply: TradeInfo }>(
+  server.get<GetTradesRequest, { Reply: TradeInfo[] }>(
     '/',
     {
       schema: {
