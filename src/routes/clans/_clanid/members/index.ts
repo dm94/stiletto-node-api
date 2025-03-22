@@ -41,12 +41,10 @@ const routes: FastifyPluginAsync = async (server) => {
     },
     (request, reply) => {
       if (!request?.dbuser) {
-        reply.code(401);
-        return new Error('Invalid token JWT');
+        return reply.code(401).send();
       }
       if (Number(request.dbuser.clanid) !== Number(request.params.clanid)) {
-        reply.code(401);
-        return new Error('You are not a member of this clan');
+        return reply.code(401).send({ message: 'You are not a member of this clan' });
       }
 
       if (request.params?.clanid) {

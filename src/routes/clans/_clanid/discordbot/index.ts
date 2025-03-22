@@ -49,8 +49,7 @@ const routes: FastifyPluginAsync = async (server) => {
     (request, reply) => {
       if (request.params?.clanid) {
         if (Number(request.dbuser.clanid) !== Number(request.params.clanid)) {
-          reply.code(401);
-          return new Error('You are not a member of this clan');
+          return reply.code(401).send({ message: 'You are not a member of this clan' });
         }
 
         if (request.dbuser?.serverdiscord) {
@@ -75,8 +74,7 @@ const routes: FastifyPluginAsync = async (server) => {
             },
           );
         } else {
-          reply.code(405);
-          return new Error('Your clan does not have a linked discord');
+          return reply.code(405).send({ message: 'Your clan does not have a linked discord' });
         }
       } else {
         return reply.code(400).send();
@@ -144,8 +142,7 @@ const routes: FastifyPluginAsync = async (server) => {
     (request, reply) => {
       if (request.params?.clanid) {
         if (Number(request.dbuser.clanid) !== Number(request.params.clanid)) {
-          reply.code(401);
-          return new Error('You are not a member of this clan');
+          return reply.code(401).send();
         }
 
         if (request.dbuser?.serverdiscord) {
@@ -153,8 +150,7 @@ const routes: FastifyPluginAsync = async (server) => {
             request?.dbuser.discordid !== request?.dbuser.leaderid &&
             (!request?.clanPermissions || !request.clanPermissions[Permission.BOT])
           ) {
-            reply.code(401);
-            return new Error('You do not have permissions to perform this action');
+            return reply.code(401).send({ message: 'You do not have permissions to perform this action' });
           }
 
           const languaje: string = request.query?.languaje ?? Languages.EN;
@@ -194,7 +190,7 @@ const routes: FastifyPluginAsync = async (server) => {
             },
           );
         } else {
-          return reply.code(405).send(new Error('Your clan does not have a linked discord'));
+          return reply.code(405).send({ message: 'Your clan does not have a linked discord' });
         }
       } else {
         return reply.code(400).send();

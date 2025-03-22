@@ -218,17 +218,16 @@ const routes: FastifyPluginAsync = async (server) => {
     (request, reply) => {
       if (request?.params?.clanid) {
         if (!request?.dbuser) {
-          reply.code(401);
-          return new Error('Invalid token JWT');
+          return reply.code(401).send();
         }
+
         if (!request?.dbuser.clanid) {
-          reply.code(401);
-          return new Error('You do not have a clan');
+          return reply.code(401).send({ message: 'You do not have a clan' });
         }
         if (request?.dbuser.discordid !== request?.dbuser.leaderid) {
-          reply.code(405);
-          return new Error('You are not the leader of this clan');
+          return reply.code(401).send({ message: 'You are not the leader of this clan' });
         }
+
         const clanId = Number(request.params.clanid);
         const discordId = String(request.dbuser.discordid);
         server.mysql.query(
