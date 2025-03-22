@@ -139,11 +139,13 @@ const routes: FastifyPluginAsync = async (server) => {
             }
           },
         );
+
         return reply.code(202).send({
           message: 'The change has been made correctly',
         });
+      } else {
+        return reply.code(405).send();
       }
-      return reply.code(405).send();
     },
   );
 };
