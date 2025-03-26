@@ -54,38 +54,19 @@ const routes: FastifyPluginAsync = async (server) => {
         return reply.code(401).send();
       }
 
-      if (
-        request.mapInfo.allowedit ||
-        (request.dbuser && request.dbuser.discordid === request.mapInfo.discordid)
-      ) {
-        server.mysql.query(
-          'select resourcemap.resourceid, resourcemap.mapid, resourcemap.resourcetype, resourcemap.quality, resourcemap.x, resourcemap.y, resourcemap.token, resourcemap.description, resourcemap.lastharvested, clanmaps.typemap from clanmaps LEFT JOIN resourcemap on resourcemap.mapid=clanmaps.mapid where clanmaps.mapid=?',
-          [request.params.mapid],
-          (err, result) => {
-            if (result) {
-              return reply.code(200).send(result as ResourceInfo[]);
-            }
-            if (err) {
-              return reply.code(503).send();
-            }
-            return reply.code(404).send();
-          },
-        );
-      } else {
-        server.mysql.query(
-          'select resourcemap.resourceid, resourcemap.mapid, resourcemap.resourcetype, resourcemap.quality, resourcemap.x, resourcemap.y, resourcemap.description, resourcemap.lastharvested, clanmaps.typemap from clanmaps LEFT JOIN resourcemap on resourcemap.mapid=clanmaps.mapid where clanmaps.mapid=?',
-          [request.params.mapid],
-          (err, result) => {
-            if (result) {
-              return reply.code(200).send(result as ResourceInfo[]);
-            }
-            if (err) {
-              return reply.code(503).send();
-            }
-            return reply.code(404).send();
-          },
-        );
-      }
+      server.mysql.query(
+        'select resourcemap.resourceid, resourcemap.mapid, resourcemap.resourcetype, resourcemap.quality, resourcemap.x, resourcemap.y, resourcemap.token, resourcemap.description, resourcemap.lastharvested, clanmaps.typemap from clanmaps LEFT JOIN resourcemap on resourcemap.mapid=clanmaps.mapid where clanmaps.mapid=?',
+        [request.params.mapid],
+        (err, result) => {
+          if (result) {
+            return reply.code(200).send(result as ResourceInfo[]);
+          }
+          if (err) {
+            return reply.code(503).send();
+          }
+          return reply.code(404).send();
+        },
+      );
     },
   );
   server.post<AddResourceRequest>(
