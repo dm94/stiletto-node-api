@@ -1,7 +1,7 @@
 import type { RequestGenericInterface } from 'fastify';
 
 export interface AddNickRequest extends RequestGenericInterface {
-  Querystring: {
+  Body: {
     dataupdate: string;
   };
 }

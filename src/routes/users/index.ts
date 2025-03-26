@@ -44,7 +44,7 @@ const routes: FastifyPluginAsync = async (server) => {
         summary: 'addNick',
         operationId: 'addNick',
         tags: ['users'],
-        querystring: {
+        body: {
           type: 'object',
           required: ['dataupdate'],
           properties: {
@@ -74,7 +74,7 @@ const routes: FastifyPluginAsync = async (server) => {
         reply.code(401);
         return new Error('Invalid token JWT');
       }
-      const dataupdate: string | undefined = request.query?.dataupdate;
+      const dataupdate: string | undefined = request.body?.dataupdate;
 
       if (dataupdate) {
         server.mysql.query(
