@@ -103,7 +103,7 @@ const routes: FastifyPluginAsync = async (server) => {
             mapid: { type: 'integer' },
           },
         },
-        querystring: {
+        body: {
           type: 'object',
           required: ['mappass', 'resourcetype', 'x', 'y'],
           properties: {
@@ -133,7 +133,7 @@ const routes: FastifyPluginAsync = async (server) => {
             },
             harvested: {
               type: 'string',
-              description: 'Resource description',
+              description: 'Resource harvested date',
             },
           },
         },
@@ -149,7 +149,7 @@ const routes: FastifyPluginAsync = async (server) => {
       },
     },
     (request, reply) => {
-      if (!request.params.mapid || !request.query.mappass) {
+      if (!request.params.mapid || !request.body.mappass) {
         return reply.code(400).send();
       }
       if (!request.mapInfo) {
@@ -163,14 +163,14 @@ const routes: FastifyPluginAsync = async (server) => {
         return reply.code(405).send();
       }
 
-      const resourceType: string = request.query?.resourcetype ?? 'Aloe';
-      const x: number = request.query?.x;
-      const y: number = request.query?.y;
-      let quality: number = request.query?.quality ?? 0;
-      const description: string = request.query?.description ?? '';
+      const resourceType: string = request.body?.resourcetype ?? 'Aloe';
+      const x: number = request.body?.x;
+      const y: number = request.body?.y;
+      let quality: number = request.body?.quality ?? 0;
+      const description: string = request.body?.description ?? '';
       const harvested: string =
-        request.query?.harvested && request.query?.harvested.length > 1
-          ? request.query?.harvested
+        request.body?.harvested && request.body?.harvested.length > 1
+          ? request.body?.harvested
           : new Date().toISOString().split('T')[0];
 
       if (quality > 100) {

@@ -19,7 +19,7 @@ const routes: FastifyPluginAsync = async (server) => {
             resourceid: { type: 'integer' },
           },
         },
-        querystring: {
+        body: {
           type: 'object',
           required: ['token'],
           properties: {
@@ -47,17 +47,17 @@ const routes: FastifyPluginAsync = async (server) => {
       },
     },
     (request, reply) => {
-      if (!request.params.resourceid || !request.query.token) {
+      if (!request.params.resourceid || !request.body.token) {
         return reply.code(400).send();
       }
 
-      const description: string | undefined = request.query?.description ?? undefined;
-      const harvested: string = request.query?.harvested ?? new Date().toISOString().split('T')[0];
+      const description: string | undefined = request.body?.description ?? undefined;
+      const harvested: string = request.body?.harvested ?? new Date().toISOString().split('T')[0];
 
       if (description) {
         server.mysql.query(
           'update resourcemap set description=? where mapid=? and resourceid=? and token=?',
-          [description, request.params.mapid, request.params.resourceid, request.query.token],
+          [description, request.params.mapid, request.params.resourceid, request.body.token],
           (err, result) => {
             if (result) {
               return reply.code(202).send({
@@ -72,7 +72,7 @@ const routes: FastifyPluginAsync = async (server) => {
       } else {
         server.mysql.query(
           'update resourcemap set lastharvested=? where mapid=? and resourceid=? and token=?',
-          [harvested, request.params.mapid, request.params.resourceid, request.query.token],
+          [harvested, request.params.mapid, request.params.resourceid, request.body.token],
           (err, result) => {
             if (result) {
               return reply.code(202).send({
@@ -131,7 +131,9 @@ const routes: FastifyPluginAsync = async (server) => {
         [request.params.mapid, request.params.resourceid, request.query.token],
         (err, result) => {
           if (result) {
-            return reply.code(204).send();
+            return reply.code(204).send({
+              message: 'Deleted resource',
+            });
           }
           if (err) {
             return reply.code(503).send();

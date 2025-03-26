@@ -33,7 +33,7 @@ export interface AddResourceRequest extends RequestGenericInterface {
   Params: {
     mapid: number;
   };
-  Querystring: {
+  Body: {
     mappass: string;
     resourcetype: string;
     quality?: number;
@@ -49,7 +49,7 @@ export interface EditResourceRequest extends RequestGenericInterface {
     mapid: number;
     resourceid: number;
   };
-  Querystring: {
+  Body: {
     token: string;
     description?: string;
     harvested?: string;
