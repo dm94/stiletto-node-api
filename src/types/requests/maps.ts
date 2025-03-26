@@ -33,6 +33,9 @@ export interface AddResourceRequest extends RequestGenericInterface {
   Params: {
     mapid: number;
   };
+  Querystring: {
+    mappass: string;
+  };
   Body: {
     mappass: string;
     resourcetype: string;

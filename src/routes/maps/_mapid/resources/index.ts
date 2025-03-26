@@ -103,14 +103,20 @@ const routes: FastifyPluginAsync = async (server) => {
             mapid: { type: 'integer' },
           },
         },
-        body: {
+        querystring: {
           type: 'object',
-          required: ['mappass', 'resourcetype', 'x', 'y'],
+          required: ['mappass'],
           properties: {
             mappass: {
               type: 'string',
               description: 'Pass for the map',
             },
+          },
+        },
+        body: {
+          type: 'object',
+          required: ['resourcetype', 'x', 'y'],
+          properties: {
             resourcetype: {
               type: 'string',
               description: 'Type of resource',
@@ -149,7 +155,7 @@ const routes: FastifyPluginAsync = async (server) => {
       },
     },
     (request, reply) => {
-      if (!request.params.mapid || !request.body.mappass) {
+      if (!request.params.mapid || !request.query.mappass) {
         return reply.code(400).send();
       }
       if (!request.mapInfo) {
