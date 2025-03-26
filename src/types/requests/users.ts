@@ -16,7 +16,7 @@ export interface GetTechRequest extends RequestGenericInterface {
 }
 
 export interface AuthRequest extends RequestGenericInterface {
-  Querystring: {
+  Body: {
     code: string;
   };
 }

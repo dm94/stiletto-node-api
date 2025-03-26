@@ -1,6 +1,6 @@
 import type { FastifyPluginAsync } from 'fastify';
 import { type LoginInfo, LoginSchema } from '@customtypes/user';
-import { Error503Default } from '@customtypes/errors';
+import { Error400Default, Error503Default } from '@customtypes/errors';
 import { getAccessToken, getUser } from '@services/DiscordAPI';
 import type { AuthRequest } from '@customtypes/requests/users';
 
@@ -13,7 +13,7 @@ const routes: FastifyPluginAsync = async (server) => {
         summary: 'authDiscord',
         operationId: 'authDiscord',
         tags: ['users'],
-        querystring: {
+        body: {
           type: 'object',
           required: ['code'],
           properties: {
@@ -25,12 +25,13 @@ const routes: FastifyPluginAsync = async (server) => {
         },
         response: {
           202: LoginSchema,
+          400: Error400Default,
           503: Error503Default,
         },
       },
     },
     async (request, reply) => {
-      const accessToken = await getAccessToken(request.query.code);
+      const accessToken = await getAccessToken(request.body.code);
 
       if (accessToken?.access_token) {
         const user = await getUser(accessToken.access_token);
