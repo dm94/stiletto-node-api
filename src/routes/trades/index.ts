@@ -265,7 +265,9 @@ const routes: FastifyPluginAsync = async (server) => {
             [tradeId, discordId],
             (err, result) => {
               if (result) {
-                return reply.code(204).send();
+                return reply.code(204).send({
+                  message: 'Trade deleted',
+                });
               }
               if (err) {
                 return reply.code(503).send();
@@ -273,8 +275,7 @@ const routes: FastifyPluginAsync = async (server) => {
             },
           );
         } else {
-          reply.code(401);
-          return new Error('Invalid token JWT');
+          return reply.code(401).send();
         }
       } else {
         return reply.code(400).send();
