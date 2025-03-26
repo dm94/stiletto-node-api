@@ -60,15 +60,16 @@ const routes: FastifyPluginAsync = async (server) => {
     },
     (request, reply) => {
       if (!request?.dbuser) {
-        reply.code(401);
-        return new Error('Invalid token JWT');
+        return reply.code(401).send();
       }
       if (Number(request.dbuser.clanid) !== Number(request.params.clanid)) {
-        reply.code(401);
-        return new Error('You are not a member of this clan');
+
+        return reply.code(401).send({
+          message: 'You are not a member of this clan',
+        });
       }
 
-      const action: string | undefined = request.query?.action ?? undefined;
+      const action: string = request.query?.action ?? undefined;
 
       if (
         !request.params?.clanid ||
@@ -82,8 +83,9 @@ const routes: FastifyPluginAsync = async (server) => {
         action === MemberActions.OWNER &&
         request?.dbuser.discordid !== request?.dbuser.leaderid
       ) {
-        reply.code(401);
-        return new Error('You do not have permissions to perform this action');
+        return reply.code(401).send({
+          message: 'You do not have permissions to perform this action',
+        });
       }
 
       if (
@@ -91,8 +93,10 @@ const routes: FastifyPluginAsync = async (server) => {
         request?.dbuser.discordid !== request?.dbuser.leaderid &&
         (!request?.clanPermissions || !request.clanPermissions[Permission.KICK_MEMBERS])
       ) {
-        reply.code(401);
-        return new Error('You do not have permissions to perform this action');
+
+        return reply.code(401).send({
+          message: 'You do not have permissions to perform this action',
+        });
       }
 
       const clanId = Number(request.params.clanid);

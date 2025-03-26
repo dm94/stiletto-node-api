@@ -42,28 +42,6 @@ const routes: FastifyPluginAsync = async (server) => {
           if (discordId) {
             const token = await reply.jwtSign({ discordid: discordId }, { expiresIn: '30d' });
 
-            /*
-            server.mysql.query(
-              'select users.nickname, users.discordtag, users.discordID discordid, users.clanid, users.token from users where users.discordID=?',
-              discordId,
-              (err, result) => {
-                if (result && result[0]?.token) {
-                  try {
-                    const valid = server.jwt.verify(result[0].token);
-                    if (valid) {
-                      return reply.code(202).send({
-                        discordid: discordId,
-                        token: result[0].token,
-                      });
-                    }
-                  } catch (e) {
-                    console.log('The token is malformed.', discordId);
-                  }
-                }
-              },
-            );
-            */
-
             const date = new Date().toISOString().split('T')[0];
             server.mysql.query(
               'INSERT INTO users(discordID, discordTag,token,createdAt) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE token=?, lastUpdate=?',
