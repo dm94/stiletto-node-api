@@ -21,7 +21,7 @@ export interface EditMapRequest extends RequestGenericInterface {
   Params: {
     mapid: number;
   };
-  Querystring: {
+  Body: {
     mappass: string;
     mapname: string;
     mapdate: string;

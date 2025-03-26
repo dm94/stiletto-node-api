@@ -1,6 +1,6 @@
 {
   "name": "stiletto-node-api",
-  "version": "3.4.9",
+  "version": "3.4.10",
   "description": "API for [Stiletto Web](https://github.com/dm94/stiletto-web)",
   "type": "module",
   "scripts": {

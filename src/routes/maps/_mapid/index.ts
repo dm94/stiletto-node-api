@@ -71,7 +71,7 @@ const routes: FastifyPluginAsync = async (server) => {
             mapid: { type: 'integer' },
           },
         },
-        querystring: {
+        body: {
           type: 'object',
           required: ['mappass', 'mapname'],
           properties: {
@@ -114,10 +114,10 @@ const routes: FastifyPluginAsync = async (server) => {
         return new Error('Invalid token JWT');
       }
 
-      const mapName: string = request.query?.mapname ?? 'Default Name';
-      const mapDate: string = request.query?.mapdate ?? new Date().toISOString().split('T')[0];
-      const mapPass: string = request.query?.mappass;
-      const allowEditing: boolean = request.query?.allowediting ?? false;
+      const mapName: string = request.body?.mapname ?? 'Default Name';
+      const mapDate: string = request.body?.mapdate ?? new Date().toISOString().split('T')[0];
+      const mapPass: string = request.body?.mappass;
+      const allowEditing: boolean = request.body?.allowediting ?? false;
 
       if (!mapPass) {
         return reply.code(400).send();
