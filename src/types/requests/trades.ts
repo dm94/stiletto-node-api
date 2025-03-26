@@ -2,7 +2,7 @@ import type { TradeType } from '@customtypes/trades';
 import type { RequestGenericInterface } from 'fastify';
 
 export interface CreateTradeRequest extends RequestGenericInterface {
-  Querystring: {
+  Body: {
     type: TradeType;
     resource: string;
     amount?: number;

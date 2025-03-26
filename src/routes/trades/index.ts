@@ -117,7 +117,7 @@ const routes: FastifyPluginAsync = async (server) => {
         summary: 'createTrade',
         operationId: 'createTrade',
         tags: ['trades'],
-        querystring: {
+        body: {
           type: 'object',
           required: ['type', 'resource', 'region', 'price'],
           properties: {
@@ -163,14 +163,14 @@ const routes: FastifyPluginAsync = async (server) => {
       },
     },
     (request, reply) => {
-      let type: string = request.query?.type ?? TradeType.Supply;
-      const resource: string = request.query?.resource ?? 'Aloe';
+      let type: string = request.body?.type ?? TradeType.Supply;
+      const resource: string = request.body?.resource ?? 'Aloe';
       let amount: number =
-        request.query?.amount && request.query.amount > 0 ? request.query.amount : 1;
+        request.body?.amount && request.body.amount > 0 ? request.body.amount : 1;
       let quality: number =
-        request.query?.quality && request.query.quality > 0 ? request.query.quality : 0;
-      let region: string | undefined = request.query?.region ?? undefined;
-      let price: number = request.query?.price && request.query.price > 0 ? request.query.price : 0;
+        request.body?.quality && request.body.quality > 0 ? request.body.quality : 0;
+      let region: string | undefined = request.body?.region ?? undefined;
+      let price: number = request.body?.price && request.body.price > 0 ? request.body.price : 0;
 
       if (type !== 'Demand') {
         type = 'Supply';
