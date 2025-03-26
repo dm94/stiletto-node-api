@@ -37,7 +37,6 @@ export interface AddResourceRequest extends RequestGenericInterface {
     mappass: string;
   };
   Body: {
-    mappass: string;
     resourcetype: string;
     quality?: number;
     x: number;
