@@ -20,7 +20,7 @@ export interface EditWalkersRequest extends RequestGenericInterface {
   Params: {
     walkerid: string;
   };
-  Querystring: {
+  Body: {
     owner?: string;
     use?: WalkerUse;
     ready?: boolean;

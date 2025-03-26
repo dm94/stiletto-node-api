@@ -31,7 +31,7 @@ const routes: FastifyPluginAsync = async (server) => {
             walkerid: { type: 'string' },
           },
         },
-        querystring: {
+        body: {
           type: 'object',
           required: [],
           properties: {
@@ -80,16 +80,16 @@ const routes: FastifyPluginAsync = async (server) => {
         return new Error('No clan');
       }
 
-      const owner: string | undefined = request.query?.owner
-        ? server.mysql.escape(request.query.owner)
+      const owner: string | undefined = request.body?.owner
+        ? server.mysql.escape(request.body.owner)
         : undefined;
-      const ready: boolean = request.query?.ready ?? false;
-      const type: string | undefined = request.query?.type
-        ? server.mysql.escape(request.query.type)
+      const ready: boolean = request.body?.ready ?? false;
+      const type: string | undefined = request.body?.type
+        ? server.mysql.escape(request.body.type)
         : undefined;
-      const use: WalkerUse | undefined = request.query?.use ?? undefined;
-      const description: string | undefined = request.query?.description
-        ? server.mysql.escape(request.query.description)
+      const use: WalkerUse | undefined = request.body?.use ?? undefined;
+      const description: string | undefined = request.body?.description
+        ? server.mysql.escape(request.body.description)
         : undefined;
 
       if (
