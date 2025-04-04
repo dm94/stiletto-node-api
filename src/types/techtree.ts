@@ -10,11 +10,11 @@ export enum Tree {
 
 export const TechTreeSchema = Type.Object({
   discordtag: Type.String(),
-  Vitamins: Type.Array(Type.String()),
-  Equipment: Type.Array(Type.String()),
-  Crafting: Type.Array(Type.String()),
-  Construction: Type.Array(Type.String()),
-  Walkers: Type.Array(Type.String()),
+  Vitamins: Type.Optional(Type.Array(Type.String())),
+  Equipment: Type.Optional(Type.Array(Type.String())),
+  Crafting: Type.Optional(Type.Array(Type.String())),
+  Construction: Type.Optional(Type.Array(Type.String())),
+  Walkers: Type.Optional(Type.Array(Type.String())),
 });
 
 export type TechTreeInfo = Static<typeof TechTreeSchema>;

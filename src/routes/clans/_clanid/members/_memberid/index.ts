@@ -63,7 +63,6 @@ const routes: FastifyPluginAsync = async (server) => {
         return reply.code(401).send();
       }
       if (Number(request.dbuser.clanid) !== Number(request.params.clanid)) {
-
         return reply.code(401).send({
           message: 'You are not a member of this clan',
         });
@@ -93,7 +92,6 @@ const routes: FastifyPluginAsync = async (server) => {
         request?.dbuser.discordid !== request?.dbuser.leaderid &&
         (!request?.clanPermissions || !request.clanPermissions[Permission.KICK_MEMBERS])
       ) {
-
         return reply.code(401).send({
           message: 'You do not have permissions to perform this action',
         });

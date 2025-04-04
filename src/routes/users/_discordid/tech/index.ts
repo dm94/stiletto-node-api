@@ -140,13 +140,9 @@ const routes: FastifyPluginAsync = async (server) => {
           );
           return reply.code(200).send(techTree);
         } else {
-          await tech.insertOne(
-            { discordtag: request.dbuser.discordtag,
-              [tree]: request.body
-            },
-          );
+          await tech.insertOne({ discordtag: request.dbuser.discordtag, [tree]: request.body });
         }
-        
+
         return reply.code(201).send();
       } catch (err) {
         console.log(err);

@@ -150,7 +150,9 @@ const routes: FastifyPluginAsync = async (server) => {
             request?.dbuser.discordid !== request?.dbuser.leaderid &&
             (!request?.clanPermissions || !request.clanPermissions[Permission.BOT])
           ) {
-            return reply.code(401).send({ message: 'You do not have permissions to perform this action' });
+            return reply
+              .code(401)
+              .send({ message: 'You do not have permissions to perform this action' });
           }
 
           const languaje: string = request.query?.languaje ?? Languages.EN;

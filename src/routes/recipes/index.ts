@@ -25,7 +25,7 @@ const routes: FastifyPluginAsync = async (server) => {
                   name: { type: 'string' },
                   count: { type: 'integer' },
                 },
-              }
+              },
             },
           },
         },

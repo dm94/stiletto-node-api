@@ -3,7 +3,11 @@ import DiscordOauth2 from 'discord-oauth2';
 export const getAccessToken = async (code: string, extra?: object) => {
   const oauth = new DiscordOauth2();
 
-  if (!process.env.DISCORD_CLIENT_ID || !process.env.DISCORD_CLIENT_SECRET || !process.env.DISCORD_REDIRECT_URL) {
+  if (
+    !process.env.DISCORD_CLIENT_ID ||
+    !process.env.DISCORD_CLIENT_SECRET ||
+    !process.env.DISCORD_REDIRECT_URL
+  ) {
     return null;
   }
 
