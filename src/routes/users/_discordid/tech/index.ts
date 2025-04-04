@@ -127,18 +127,26 @@ const routes: FastifyPluginAsync = async (server) => {
         reply.code(401);
         return new Error('Invalid token JWT');
       }
+
       const tree: string = request.query?.tree ? request.query.tree : 'Vitamins';
       const tech = server.mongo.client.db('lastoasis').collection('tech');
 
       try {
-        await tech.updateOne(
-          { discordtag: request.dbuser.discordtag },
-          { $set: { [tree]: request.body } },
-        );
         const techTree = await tech.findOne({ discordtag: request.dbuser.discordtag });
         if (techTree) {
+          await tech.updateOne(
+            { discordtag: request.dbuser.discordtag },
+            { $set: { [tree]: request.body } },
+          );
           return reply.code(200).send(techTree);
+        } else {
+          await tech.insertOne(
+            { discordtag: request.dbuser.discordtag,
+              [tree]: request.body
+            },
+          );
         }
+        
         return reply.code(201).send();
       } catch (err) {
         console.log(err);
