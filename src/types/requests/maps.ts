@@ -17,6 +17,12 @@ export interface GetMapRequest extends RequestGenericInterface {
   };
 }
 
+export interface GetMapInfoRequest extends RequestGenericInterface {
+  Params: {
+    mapid: number;
+  };
+}
+
 export interface EditMapRequest extends RequestGenericInterface {
   Params: {
     mapid: number;

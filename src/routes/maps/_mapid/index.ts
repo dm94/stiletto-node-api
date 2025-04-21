@@ -5,7 +5,7 @@ import {
   Error503Default,
 } from '@customtypes/errors';
 import { type MapInfo, MapSchema } from '@customtypes/maps';
-import type { EditMapRequest, GetMapRequest } from '@customtypes/requests/maps';
+import type { EditMapRequest, GetMapInfoRequest, GetMapRequest } from '@customtypes/requests/maps';
 import { addMapInfo } from '@services/mapinfo';
 import { Type } from '@sinclair/typebox';
 import type { FastifyPluginAsync } from 'fastify';
@@ -207,6 +207,80 @@ const routes: FastifyPluginAsync = async (server) => {
           return reply.code(404).send();
         },
       );
+    },
+  );
+  server.get<GetMapInfoRequest, { Reply: MapInfo }>(
+    '/mapinfo',
+    {
+      onRequest: [server.authenticate],
+      schema: {
+        description:
+          'Returns information of a specific map by ID. Only the owner or clan members can access this information.',
+        summary: 'getMapInfo',
+        operationId: 'getMapInfo',
+        tags: ['maps'],
+        params: {
+          type: 'object',
+          properties: {
+            mapid: { type: 'integer' },
+          },
+        },
+        security: [
+          {
+            token: [],
+          },
+        ],
+        response: {
+          200: MapSchema,
+          400: Error400Default,
+          401: Error401Default,
+          404: Error404Default,
+          503: Error503Default,
+        },
+      },
+    },
+    (request, reply) => {
+      if (!request?.dbuser) {
+        reply.code(401);
+        return new Error('Invalid token JWT');
+      }
+
+      if (!request.params.mapid) {
+        return reply.code(400).send();
+      }
+
+      if (request.dbuser.clanid) {
+        server.mysql.query(
+          'SELECT clanmaps.mapid, clanmaps.typemap, clanmaps.discordid, clanmaps.name, clanmaps.dateofburning, clanmaps.pass, clanmaps.allowedit, users.discordTag ' +
+            'FROM clanmaps JOIN users ON clanmaps.discordID = users.discordID ' +
+            'WHERE clanmaps.mapid = ? AND clanmaps.discordid IN (SELECT discordID FROM users WHERE clanid = ?)',
+          [request.params.mapid, request.dbuser.clanid],
+          (err, result) => {
+            if (result?.[0]) {
+              return reply.code(200).send(result[0] as MapInfo);
+            }
+            if (err) {
+              return reply.code(503).send();
+            }
+            return reply.code(404).send();
+          },
+        );
+      } else {
+        server.mysql.query(
+          'SELECT clanmaps.mapid, clanmaps.typemap, clanmaps.discordid, clanmaps.name, clanmaps.dateofburning, clanmaps.pass, clanmaps.allowedit ' +
+            'FROM clanmaps WHERE clanmaps.mapid = ? AND clanmaps.discordID = ?',
+          [request.params.mapid, request.dbuser.discordid],
+          (err, result) => {
+            if (result?.[0]) {
+              return reply.code(200).send(result[0] as MapInfo);
+            }
+            if (err) {
+              return reply.code(503).send();
+            }
+            return reply.code(404).send();
+          },
+        );
+      }
     },
   );
 };
