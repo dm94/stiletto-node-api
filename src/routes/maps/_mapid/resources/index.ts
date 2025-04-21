@@ -55,7 +55,7 @@ const routes: FastifyPluginAsync = async (server) => {
       }
 
       server.mysql.query(
-        'select resourcemap.resourceid, resourcemap.mapid, resourcemap.resourcetype, resourcemap.quality, resourcemap.x, resourcemap.y, resourcemap.token, resourcemap.description, resourcemap.lastharvested, clanmaps.typemap from clanmaps LEFT JOIN resourcemap on resourcemap.mapid=clanmaps.mapid where clanmaps.mapid=?',
+        'select resourcemap.resourceid, resourcemap.mapid, resourcemap.resourcetype, resourcemap.quality, resourcemap.x, resourcemap.y, resourcemap.token, resourcemap.description, resourcemap.lastharvested, clanmaps.typemap from clanmaps inner JOIN resourcemap on resourcemap.mapid=clanmaps.mapid where clanmaps.mapid=?',
         [request.params.mapid],
         (err, result) => {
           if (result) {
