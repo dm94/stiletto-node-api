@@ -1,6 +1,6 @@
 {
   "name": "stiletto-node-api",
-  "version": "3.4.13",
+  "version": "3.5.0",
   "description": "API for [Stiletto Web](https://github.com/dm94/stiletto-web)",
   "type": "module",
   "scripts": {
@@ -17,11 +17,7 @@
   "engines": {
     "node": ">=20.0.0"
   },
-  "keywords": [
-    "nodejs",
-    "fastify",
-    "typescript"
-  ],
+  "keywords": ["nodejs", "fastify", "typescript"],
   "author": "Daniel Martín",
   "bugs": {
     "url": "https://github.com/dm94/stiletto-node-api/issues"
