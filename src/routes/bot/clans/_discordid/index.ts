@@ -75,7 +75,7 @@ const routes: FastifyPluginAsync = async (server) => {
             const clanId = r[0].clanid;
             const leaderId = r[0].leaderid;
 
-            if (clanId && leaderId && hasPermissions(server, memberId, Permission.BOT)) {
+            if (clanId && leaderId && (memberId === leaderId || hasPermissions(server, memberId, Permission.BOT))) {
               server.mysql.query(
                 'update clans set discordid=? where clanid=?',
                 [serverDiscordId, clanId],
