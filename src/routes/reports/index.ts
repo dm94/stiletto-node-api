@@ -50,7 +50,9 @@ const routes: FastifyPluginAsync = async (server) => {
         }),
       );
 
-      return reply.code(201).send();
+      return reply.code(201).send({
+        message: 'Incident reported',
+      });
     },
   );
 };
