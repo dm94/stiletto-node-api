@@ -188,8 +188,8 @@ const routes: FastifyPluginAsync = async (server) => {
       onRequest: [server.authenticate],
       schema: {
         description: "Add a new walker",
-        summary: "addWalker",
-        operationId: "addWalker",
+        summary: "addWalkerFromUser",
+        operationId: "addWalkerFromUser",
         tags: ["walkers"],
         body: {
           type: "object",
