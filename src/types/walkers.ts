@@ -1,10 +1,16 @@
 import { type Static, Type } from '@sinclair/typebox';
 
 export enum WalkerUse {
-  PVP = 'pvp',
-  FARMING = 'farming',
-  PERSONAL = 'personal',
-  RAM = 'ram',
+  PVP = "pvp",
+  FARMING = "farming",
+  PERSONAL = "personal",
+  RAM = "ram",
+  SCOUT = "scout",
+  RAIDER = "raider",
+  SUPPORT = "support",
+  HAULER = "hauler",
+  CRAFT = "craft",
+  STORAGE = "storage",
 }
 
 export enum WalkerType {
