@@ -16,6 +16,17 @@ export interface GetWalkersRequest extends RequestGenericInterface {
   };
 }
 
+export interface AddWalkersRequest extends RequestGenericInterface {
+  Body: {
+    name: string;
+    owner?: string;
+    use?: WalkerUse;
+    ready?: boolean;
+    type?: WalkerType;
+    description?: string;
+  };
+}
+
 export interface EditWalkersRequest extends RequestGenericInterface {
   Params: {
     walkerid: string;
