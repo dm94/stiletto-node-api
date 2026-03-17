@@ -275,13 +275,14 @@ const routes: FastifyPluginAsync = async (server) => {
           description,
         ],
         (insertErr, insertResult) => {
+          if (insertErr) {
+            return reply.code(503).send();
+          }
+
           if (insertResult) {
             return reply.code(201).send({
               message: "Walker created",
             });
-          }
-          if (insertErr) {
-            return reply.code(503).send();
           }
         },
       );
