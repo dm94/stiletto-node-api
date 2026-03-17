@@ -238,9 +238,11 @@ const routes: FastifyPluginAsync = async (server) => {
         reply.code(401);
         return new Error("Invalid token JWT");
       }
-      if (!request?.dbuser.clanid || !request?.dbuser.serverdiscord) {
-        reply.code(405);
-        return new Error("No clan");
+      if (!request?.dbuser.clanid) {
+        return reply.code(405).send("No clan");
+      }
+      if (!request?.dbuser.serverdiscord) {
+        return reply.code(405).send("No discord server linked");
       }
       if (!request?.body?.name) {
         return reply.code(400).send("Bad Request");
