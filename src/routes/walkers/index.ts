@@ -243,7 +243,7 @@ const routes: FastifyPluginAsync = async (server) => {
         return new Error("No clan");
       }
       if (!request?.body?.name) {
-        return reply.code(400).send();
+        return reply.code(400).send("Bad Request");
       }
 
       const walkerid: string = randomUUID();
