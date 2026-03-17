@@ -87,12 +87,10 @@ const routes: FastifyPluginAsync = async (server) => {
     },
     (request, reply) => {
       if (!request?.dbuser) {
-        reply.code(401);
-        return new Error("Invalid token JWT");
+        return reply.code(401).send("Invalid token JWT");
       }
       if (!request?.dbuser.clanid) {
-        reply.code(405);
-        return new Error("No clan");
+        return reply.code(405).send("No clan");
       }
 
       let pageSize: number =
