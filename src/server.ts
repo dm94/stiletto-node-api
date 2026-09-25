@@ -8,7 +8,7 @@ import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
 import mysql from '@fastify/mysql';
 import mongodb from '@fastify/mongodb';
-import { schema } from './utils/swagger';
+import { schema } from './utils/swagger.js';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
